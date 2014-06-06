@@ -38,14 +38,14 @@
                             <a href="index.html">
                                 <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                             </a>
-                        </li>
+                        </li> 
                         <li>
                             <a href="<?php echo site_url("admin/projects/");?>">
                                 <i class="fa fa-th"></i> <span>Projects</span> <small class="badge pull-right bg-green"> </small>
                             </a>
                         </li>
                         <li class="treeview">
-                            <a href="<?php echo site_url("admin/user/");?>">
+                            <a href="<?php echo site_url("admin/user/");?>">   
                                 <i class="fa fa-user"></i>
                                 <span>User</span>
                             </a>
