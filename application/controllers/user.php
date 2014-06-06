@@ -60,7 +60,7 @@ public function login() {
              if($query[0]['is_admin']==1){
                  session_start();
                  $_SESSION['is_loggedin_admin']="yes";
-                 $_SESSION['admin_name']=$query[0]['dispaly_name'];
+                 $_SESSION['admin_name']=$query[0]['display_name'];
                  $_SESSION['admin_mail']=$uname;
                   redirect('admin/front');
              }

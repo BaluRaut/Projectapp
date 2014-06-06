@@ -175,11 +175,9 @@ function updatesuccess()
 
 /****************This function is used for to display Logout  Successful mesage***************/
 
-function logoutsuccess()
-{
-       
-  $data['success']='logout';
-  $this->load->view('backend',$data);    
+function logoutsuccess(){
+   $data['success']='logout';
+  $this->load->view('login',$data);    
 }
 
 /****************This function is used for Import Contcats from CSV file ***************/
@@ -1534,6 +1532,8 @@ function _example_outputmember($output = null)
 	}	
  }
 
+ //**************Load Front page of admin*****************************
+ 
 public function front() {
   if(!session_start())    {
        redirect('user/login'); exit();
@@ -1543,25 +1543,49 @@ public function front() {
   }
   else
   {
+       redirect('user/login'); exit();
+  }
+}
+
+//******************Load Project Page**************************************
+public function projects() {
+  if(!session_start())    {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_admin']=="yes")  {
+      
+      if($this->input->post('flag')=="submit") {
+          print_r($_POST);
+          die();
+      } else {
+      $condition="  WHERE is_Project_Manager='1'";
+      $query=$this->Loginmodel->getdata("users",$condition);
+      $data['project_manager']=$query;
+      $condition2="  WHERE is_Project_Manager='0' AND is_admin='0'";
+      $query_user=$this->Loginmodel->getdata("users",$condition2);
+      $data['user']=$query_user;
+      $this->load->view('admin/project',@$data);
+      }
+  }
+  else
+  {
       echo "ok";
       die();
       show_404();  
   }
 }
- public function logout()
- {
-  if(!session_start())
-  {
-    echo "You must first logged in and then logout";
+
+ public function logout()  {
+  if(!session_start()) {
    echo anchor('user/login','Login');
   }
-  else
-  {
-   if(@$_SESSION['aname']=="karan@avika.in")
-   {
+  else  {
+   if($_SESSION['is_loggedin_admin']=="yes")   {
    echo "you are successfully logout from our site you can";
-   
    unset($_SESSION['aname']);
+   unset($_SESSION['is_loggedin_admin']);
+   unset($_SESSION['admin_name']);
+   unset($_SESSION['admin_mail']);
    session_destroy();
    //echo anchor('user/login','Login');
    redirect('admin/logoutsuccess');
@@ -1570,7 +1594,7 @@ public function front() {
    {
        
    }
- }
+  }
 }
 function user_management()
 	{  

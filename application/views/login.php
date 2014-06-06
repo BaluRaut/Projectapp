@@ -22,6 +22,7 @@
                 <!-- Content Header (Page header) -->
              <!-- Main content -->
                 <section class="content">
+                    <?php if(@$success=="logout") echo "You are successfully Log out"; ?>
                    <div class="login-box">
 
 			<h2>Login to your account</h2>

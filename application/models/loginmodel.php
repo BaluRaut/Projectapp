@@ -24,10 +24,18 @@ class Loginmodel extends CI_Model
 	{		
 		$sql = "SELECT * FROM " . $validates. " WHERE  Email= ?  AND Password= ? ";
 		$query=$this->db->query($sql, array($uname,$password)); 
-        $user=$query->result_array();
-	   //echo $this->db->last_query(); die();
-	   return @$user;  
+                 $user=$query->result_array();
+	         //echo $this->db->last_query(); die();
+	           return @$user;  
 	}	
+   function getdata($tblname,$condition)	{		
+
+        $sql = "SELECT * FROM " . $tblname. "  $condition  ";
+        $query=$this->db->query($sql); 
+        $user=$query->result_array();
+       //  echo $this->db->last_query(); die(); 
+         return @$user;  
+	}
   function check_member($validates,$uname,$password)
   {
         	$check_value="";
