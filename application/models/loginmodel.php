@@ -2,22 +2,17 @@
 
 class Loginmodel extends CI_Model 
 {
-	function __construct()
-	{
+	function __construct()	{
 		parent::__construct();
 		$this->load->database();
 	}
-	function validate($validates,$uname,$password)
-	{		
+	function validate($validates,$uname,$password) {		
 		$sql = "SELECT * FROM " . $validates. " WHERE  Email= ?  AND Password= ?  LIMIT 1";
 		$query=$this->db->query($sql, array($uname,$password)); 
          //echo $this->db->last_query(); die();		
-		if ($query->num_rows() > 0)
-                {
+		if ($query->num_rows() > 0)  {
 		   $user=$query->result_array();
-                   //print_r($user);
-	   //echo $this->db->last_query(); die();
-	         return @$user;
+                   return @$user;
                 }
 	}
    function getname($validates,$uname,$password)
@@ -28,7 +23,7 @@ class Loginmodel extends CI_Model
 	         //echo $this->db->last_query(); die();
 	           return @$user;  
 	}	
-   function getdata($tblname,$condition)	{		
+   function getdata($tblname,$condition){	
 
         $sql = "SELECT * FROM " . $tblname. "  $condition  ";
         $query=$this->db->query($sql); 
@@ -36,6 +31,12 @@ class Loginmodel extends CI_Model
        //  echo $this->db->last_query(); die(); 
          return @$user;  
 	}
+    function insert_table($table,$data){
+        
+         $this->db->insert($table,$data);
+	  //echo $this->db->last_query(); die();
+	  return true;
+    }
   function check_member($validates,$uname,$password)
   {
         	$check_value="";

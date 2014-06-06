@@ -1555,9 +1555,26 @@ public function projects() {
   if(@$_SESSION['is_loggedin_admin']=="yes")  {
       
       if($this->input->post('flag')=="submit") {
-          print_r($_POST);
-          die();
-      } else {
+          $cnt=count($_POST['e9']);
+          //print_r($_POST);
+          //echo $_POST['e9'][0];
+          //die();
+             $add="";
+          for($k=0;$k<$cnt;$k++){
+             $add.=$_POST['e9'][$k].".";
+          }
+          $data_insert=array(
+                            'project_id'=>NULL,
+                            'Project_Manager'=> $this->input->post('project_manager'),
+                            'Users'=> "$add",
+                            'Start_Date'=>$this->input->post('date_timepicker_start'),
+                            'End_Date'=>$this->input->post('date_timepicker_end'),
+                            'project_name'=>$this->input->post('project_name')
+                            );
+          $run=$this->Loginmodel->insert_table('projects',$data_insert);
+          redirect('admin/create_projectsuccess');
+          exit();
+       } else {
       $condition="  WHERE is_Project_Manager='1'";
       $query=$this->Loginmodel->getdata("users",$condition);
       $data['project_manager']=$query;
@@ -1574,10 +1591,24 @@ public function projects() {
       show_404();  
   }
 }
+function create_projectsuccess(){
+     if(!session_start()) {
+   redirect('user/login');
+  }
+  else  {
+   if($_SESSION['is_loggedin_admin']=="yes"){ 
+     $data['success']="project_create";
+    $this->load->view('admin/front',$data); 
+   }
+   else   {
+        redirect('user/login');
+   }
+ } 
+}
 
  public function logout()  {
   if(!session_start()) {
-   echo anchor('user/login','Login');
+   redirect('user/login');
   }
   else  {
    if($_SESSION['is_loggedin_admin']=="yes")   {
@@ -1592,7 +1623,7 @@ public function projects() {
    }
    else
    {
-       
+        redirect('user/login');
    }
   }
 }

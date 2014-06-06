@@ -75,7 +75,7 @@
                         <tr> <td> 
                                 <label for="inputSuccess" class="control-label"> Project Name:</label> </td>
                             <td> 
-                        <input type="text" placeholder="Enter ..." id="inputSuccess" class="form-control">
+                        <input type="text" placeholder="Project Name" id="inputSuccess" name="project_name" class="form-control">
                             </td> </tr>
                         <tr> <td>                    
                                 <label for="inputSuccess" class="control-label"> Project Manager:</label> </td>
@@ -101,14 +101,14 @@
                         </tr>
                         <tr> <td> 
                                 <label for="inputSuccess" class="control-label"> Start Date:</label> </td>
-                        <td> <input type="text" placeholder="Enter ..." name="date_timepicker_start" 
+                        <td> <input type="text" placeholder="Start Date" name="date_timepicker_start" 
                                     id="date_timepicker_start" class="form-control col-xs-5">
                         </td>
                         </tr>
                         <tr><td> 
                                 <label for="inputSuccess" class="control-label"> End Date:</label> </td>
                             <td> 
-                        <input type="text" placeholder="Enter ..." name="date_timepicker_end" 
+                        <input type="text" placeholder="End Date" name="date_timepicker_end" 
                                     id="date_timepicker_end" class="form-control">
                         </tr>
                         <tr> <td> &nbsp; </td> <td> &nbsp; </td> </tr>
@@ -136,7 +136,7 @@
    <script type="text/javascript">
    jQuery(function(){
  jQuery('#date_timepicker_start').datetimepicker({
-  format:'d/m/Y H:i',
+  format:'Y-m-d H:i:s',
   onShow:function( ct ){
    this.setOptions({
     maxDate:jQuery('#date_timepicker_end').val()?jQuery('#date_timepicker_end').val():false
@@ -145,7 +145,7 @@
   timepicker:false
  });
  jQuery('#date_timepicker_end').datetimepicker({
-  format:'d/m/Y H:i',
+  format:'Y-m-d H:i:s',
   onShow:function( ct ){
    this.setOptions({
     minDate:jQuery('#date_timepicker_start').val()?jQuery('#date_timepicker_start').val():false

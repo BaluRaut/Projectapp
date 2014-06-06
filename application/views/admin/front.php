@@ -65,7 +65,7 @@
                 <!-- Content Header (Page header) -->
              <!-- Main content -->
                 <section class="content">
-
+                     <?php  if($success=="project_create") { echo "<span> Project Created Succesfully </span>" ; } ?>
                    
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
