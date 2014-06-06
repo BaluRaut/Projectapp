@@ -66,6 +66,7 @@
              <!-- Main content -->
             
                 <section class="content">
+                    <div style="color:red" class="error_box">   </div>
                     <?php 
 			$attributes = array( 'id' => 'myform','name'=> 'myform','class'=>'form-horizontal' );    
 			echo form_open_multipart('admin/projects',$attributes);
@@ -90,7 +91,7 @@
                             </td>
 
                         <tr> <td>   <label for="inputSuccess" class="control-label"> Project users:</label> </td>
-                            <td> <select id="users" style="width:380px" name="e9[]" multiple="" class="col-xs-5" name="users"> 
+                            <td> <select id="users" style="width:380px" name="project_users[]" multiple="" class="col-xs-5" name="users"> 
                         <option value="None" id="none"> None </option> <?php //print_r($project_manager);
                          foreach($user as $key) {
                           echo "<option value='".$key['email']."'>".$key['display_name']."</option>";
@@ -126,6 +127,7 @@
           <?php include("/../loadjs.php"); ?>      
  <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>/js/jquery.datetimepicker.css"/ >
 <script src="<?php echo base_url();?>js/jquery.datetimepicker.js"></script>
+<script src="<?php echo base_url();?>js/validate.js"></script>
     <script>
     $(document).ready(function() { 
         $("#project_manager").select2();
@@ -155,5 +157,47 @@
  });
 });
 </script> 
+ <script type="text/javascript">
+var validator = new FormValidator('myform', [{
+    name: 'date_timepicker_start',
+    rules: 'required'
+},
+{
+    name: 'date_timepicker_end',
+    rules: 'required'
+},
+{
+    name: 'project_name',
+    rules: 'required'
+},
+{
+    name: 'project_manager',
+    rules: 'required'
+},
+{
+    name: 'project_users[]',
+    rules: 'required'
+}], function(errors, evt) {
+      var SELECTOR_ERRORS = $('.error_box'),
+      SELECTOR_SUCCESS = $('.success_box');
+        
+    if (errors.length > 0) {
+        SELECTOR_ERRORS.empty();
+        
+        for (var i = 0, errorLength = errors.length; i < errorLength; i++) {
+            SELECTOR_ERRORS.append(errors[i].message + '<br />');
+        }
+        SELECTOR_SUCCESS.css({ display: 'none' });
+        SELECTOR_ERRORS.fadeIn(200);
+    } else {
+             
+        SELECTOR_ERRORS.css({ display: 'none' });
+        SELECTOR_SUCCESS.fadeIn(200);
+    }
+    
+   
+});
+
+</script>
 </body>
 </html>

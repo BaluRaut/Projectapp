@@ -1561,7 +1561,7 @@ public function projects() {
           //die();
              $add="";
           for($k=0;$k<$cnt;$k++){
-             $add.=$_POST['e9'][$k].".";
+             $add.=$_POST['project_users'][$k].".";
           }
           $data_insert=array(
                             'project_id'=>NULL,
