@@ -1678,7 +1678,35 @@ VALUES
         }
     }
   }
+public function user(){
+  if(!session_start()) {
+      redirect('user/login');
+  }
+  if($_SESSION['is_loggedin_admin']=="yes") {
+    if($this->input->post('flag')=="submit") {
+        $this->form_validation->set_rules('email','email', 'required|valid_email|is_unique[users.email]');
+        $this->form_validation->set_rules('password','password','required');
+        if($this->form_validation->run()==TRUE)	{     
+            
+            echo "p";
+        }
+        else {
+                    $this->load->view('admin/user');
+        }
+        }
+     else
+     {
 
+        $data['user']="p";
+        $this->load->view('admin/user',$data); 
+     }
+  }
+  else {
+      redirect('user/login');
+  }
+      
+      
+}
  public function logout()  {
   if(!session_start()) {
    redirect('user/login');

@@ -128,7 +128,7 @@
                                     id="date_timepicker_end" class="form-control">
                         </tr>
                         <tr> <td> &nbsp; </td> <td> &nbsp; </td> </tr>
-                        <tr> <td> &nbsp; </td> <td>  <input type="submit" class="btn btn-primary" value="Create Project" name="Submit"/> </td> 
+                        <tr> <td> &nbsp; </td> <td>  <input type="submit" class="btn btn-primary" value="Create Task" name="Submit"/> </td> 
                         </tr>
                     </table>
                    
