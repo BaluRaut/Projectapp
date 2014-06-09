@@ -15,6 +15,17 @@ class Loginmodel extends CI_Model
                    return @$user;
                 }
 	}
+        function check_duplicate($tblname,$value1,$value2,$value3) {		
+		$sql = "SELECT * FROM " . $tblname. " WHERE  task_name= ?  AND user_id= ? AND project_id= ?  LIMIT 1";
+		$query=$this->db->query($sql, array($value1,$value2,$value3)); 
+         //echo $this->db->last_query(); die();		
+		if ($query->num_rows() > 0)  {
+                return true;
+		}
+                else {
+                 return false;
+                }
+	}
    function getname($validates,$uname,$password)
 	{		
 		$sql = "SELECT * FROM " . $validates. " WHERE  Email= ?  AND Password= ? ";

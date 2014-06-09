@@ -64,27 +64,23 @@
                 <!-- Content Header (Page header) -->
              <!-- Main content -->
                 <section class="content">
-                     <?php  if(@$_SESSION['success']=="project_create") {  unset($_SESSION['success']);  echo "<span> Project Created Succesfully </span>" ; } ?>
+                     <?php  if(@$_SESSION['success']=="project_create") {  unset($_SESSION['success']);  echo "<span id='sess' style='color:#00A65A'> Project Created Succesfully </span>" ; } ?>
+                     <?php  if(@$_SESSION['success']=="task_created") {  unset($_SESSION['success']);  echo "<span id='sess' style='color:#00A65A'> Task Created Succesfully </span>" ; } ?>
+                     <?php if(@$_SESSION['message']=="Some users Task already created") { unset($_SESSION['message']);  echo "<span id='sess' style='color:#F56954 !important'> <br/>For some users already created same task. </span>" ;   }  ?> 
                    <div style="color:red" class="error_box">   </div>
                     <?php 
 			$attributes = array('id' => 'myform','name'=> 'myform','class'=>'form-horizontal');    
-			echo form_open_multipart('admin/projects',$attributes);
+			echo form_open_multipart('admin/task',$attributes);
 			?>
                     <input type="hidden" value="submit" name="flag"/>
-                                 <div id="endates">  <?php //print_r($project_manager);
+                                  <?php //print_r($project_manager);
                         foreach($project_names as $key) {
-                          echo "<input type='hidden' id='".str_replace(" ","_",$key['project_name'])."'"
+                          echo "<input type='hidden' id='end".str_replace(" ","_",$key['project_name'])."__".$key['project_id']."'"
                                   . " value='".$key['End_Date']."'/>";
-                        }
-                        ?> 
-                       </div>
-                                <div id="strdates">  <?php //print_r($project_manager);
-                        foreach($project_names as $key) {
-                          echo "<input type='hidden' id='".str_replace(" ","_",$key['project_name'])."'"
+                          echo "<input type='hidden' id='std".str_replace(" ","_",$key['project_name'])."__".$key['project_id']."'"
                                   . " value='".$key['Start_Date']."'/>";
                         }
                         ?> 
-                       </div>
                     <table>
                         <tr> <td> 
                                 <label for="inputSuccess" 
@@ -94,7 +90,7 @@
                                  name="project_name">
                         <?php //print_r($project_manager);
                         foreach($project_names as $key) {
-                          echo "<option value='".str_replace(" ","_",$key['project_name'])."'>".$key['project_name']."</option>";
+                          echo "<option value='".str_replace(" ","_",$key['project_name'])."__".$key['project_id']."'>".$key['project_name']."</option>";
                         }
                         ?>                           
                         </select>
@@ -112,7 +108,7 @@
                                          multiple="" class="col-xs-5" name="users"> 
                         <option value="None" id="none"> None </option> <?php //print_r($project_manager);
                          foreach($user as $key) {
-                          echo "<option value='".$key['email']."'>".$key['display_name']."</option>";
+                          echo "<option value='".$key['id']."'>".$key['display_name']."</option>";
                         }
                         ?>                           
                         </select>
@@ -148,27 +144,41 @@
     $(document).ready(function() { 
         $("#project_name").select2();
         $("#users").select2( {maximumSelectionSize: 5,closeOnSelect:false });
-    
+        var ingnore_key_codes = [8,9,13,16,17,18,19,20,27,32,33,34,35,36,37,38,39,40,44,45,46,48,49,50,51,52,53,54,55,56,57,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,96,97,98,99,100,101,102,103,104,105,106,107,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,144,145,186,187,188,189,190,191,219,220,221,222];
+        $('#date_timepicker_start').keydown(function(e){
+           if ($.inArray(e.keyCode, ingnore_key_codes) >= 0){
+              e.preventDefault();
+           }
+        });
+         $('#date_timepicker_end').keydown(function(e){
+           if ($.inArray(e.keyCode, ingnore_key_codes) >= 0){
+              e.preventDefault();
+           }
+        });
     });
     </script>
    <script type="text/javascript">
    jQuery(function(){          
     var edate="";
     var edt="";
-    var sdt="";
+    var std="";
     jQuery("#project_name").on("change", function() {
          edate=jQuery("#project_name").val();
          //alert(edate);
-        edt=jQuery("#endates #"+edate).val();
-        sdt=jQuery("#strdates #"+edate).val();
+        edt=jQuery("#end"+edate).val();
+            
+        std=jQuery("#std"+edate).val();
     });
  jQuery('#date_timepicker_start').datetimepicker({
   format:'Y-m-d H:i:s',
   onShow:function( ct ){
-    
-   this.setOptions({
+   //alert(edt);
+
+  
+   this.setOptions({       
 maxDate:edt,formatDate:'Y-m-d H:i:s',
-minDate:sdt,formatDate:'Y-m-d H:i:s'
+minDate:std,formatDate:'Y-m-d H:i:s'
+
    })
   },
   timepicker:false
@@ -177,6 +187,8 @@ minDate:sdt,formatDate:'Y-m-d H:i:s'
   format:'Y-m-d H:i:s',
   onShow:function( ct ){
    this.setOptions({
+    maxDate:edt,formatDate:'Y-m-d H:i:s',
+    //minDate:std,formatDate:'Y-m-d H:i:s'
     minDate:jQuery('#date_timepicker_start').val()?jQuery('#date_timepicker_start').val():false
    })
   },
@@ -206,7 +218,8 @@ var validator = new FormValidator('myform', [{
     rules: 'required'
 }], function(errors, evt) {
       var SELECTOR_ERRORS = $('.error_box'),
-      SELECTOR_SUCCESS = $('.success_box');
+      SELECTOR_SUCCESS = $('.success_box'),
+       SELECTOR_SESS = $('#sess');
         
     if (errors.length > 0) {
         SELECTOR_ERRORS.empty();
@@ -214,10 +227,11 @@ var validator = new FormValidator('myform', [{
         for (var i = 0, errorLength = errors.length; i < errorLength; i++) {
             SELECTOR_ERRORS.append(errors[i].message + '<br />');
         }
+       SELECTOR_SESS.css({ display: 'none' });
         SELECTOR_SUCCESS.css({ display: 'none' });
         SELECTOR_ERRORS.fadeIn(200);
     } else {
-             
+             SELECTOR_SESS.css({ display: 'none' });
         SELECTOR_ERRORS.css({ display: 'none' });
         SELECTOR_SUCCESS.fadeIn(200);
     }

@@ -1613,6 +1613,56 @@ public function task () {
     }
     else {
         if($_SESSION['is_loggedin_admin']=="yes"){
+            
+          if($this->input->post('flag')=="submit") {
+            $cnt=count($_POST['project_users']);
+                  
+               $add="";
+               /*
+                * Array ( [flag] => submit [project_name] => Avika_Wesbite_Changes__7
+                *  [task_name] => Landing Page Testing
+                *  [project_users] => Array ( [0] => 4 [1] => 5 ) 
+                * [date_timepicker_start] => 2014-06-18 17:09:09 
+                * [date_timepicker_end] => 2014-06-28 17:09:11 
+                * [Submit] => Create Project )
+                * `tasks`(`task_id`,
+                *  `user_id`, 
+                * `task_name`, 
+                * `project_id`, 
+                *           *  `Start Date`, `End Date`)
+                * 
+                * NSERT INTO `tasks` ( `task_id` , `user_id` , `task_name` , `project_id` ,
+                *                      `is_opened` , `is_stopped` , `Start Time` , `End Time` ,
+                *                      `Start Date` , `End Date` )
+VALUES 
+                * 
+                */
+              
+               $p_id=explode("__",$_POST['project_name']);
+            for($k=0;$k<$cnt;$k++){
+                $rt=$this->Loginmodel->check_duplicate("tasks",$_POST['task_name'],$_POST['project_users'][$k],$p_id[1]);
+                if($rt==true) {
+                   $_SESSION['message']= "Some users Task already created";
+                }
+                else {
+                     $data_insert=array(
+                              'task_id'=>NULL,
+                              'task_name'=>$_POST['task_name'],
+                              'project_id'=> $p_id[1],
+                              'user_id'=> $_POST['project_users'][$k],
+                              'is_opened'=>'1',
+                              'is_stopped'=>'1',
+                              'StartDate'=>$this->input->post('date_timepicker_start'),
+                              'EndDate'=>$this->input->post('date_timepicker_end')
+                              );
+                $run=$this->Loginmodel->insert_table('tasks',$data_insert);
+                }
+            }
+       
+            $_SESSION['success']="task_created";
+            redirect('admin/task');
+            exit();
+          } else {
             $data['success']="project_create";
             $condition="GROUP BY project_name";
             $query=$this->Loginmodel->getdata("projects",$condition);
@@ -1621,13 +1671,13 @@ public function task () {
             $query_user=$this->Loginmodel->getdata("users",$condition2);
             $data['user']=$query_user;
              $this->load->view('admin/task',$data); 
-        }
+          } // Load Default form of task management
+        } // Check logged in or not
         else {
             redirect('user/login');
         }
     }
-    
-}
+  }
 
  public function logout()  {
   if(!session_start()) {
