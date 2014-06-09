@@ -17,8 +17,7 @@ class User   extends CI_Controller
 			$this->form_validation->set_error_delimiters('<div style="color:red" id="errtext">', '</div>');
 	}
         
-        public function check()
-{
+        public function check() {
             if(!session_start()) { $this->load->view('front');
             }
             if(@$_SESSION['uname']=="")

@@ -1572,7 +1572,8 @@ public function projects() {
                             'project_name'=>$this->input->post('project_name')
                             );
           $run=$this->Loginmodel->insert_table('projects',$data_insert);
-          redirect('admin/create_projectsuccess');
+           $_SESSION['success']="project_create";
+          redirect('admin/task');
           exit();
        } else {
       $condition="  WHERE is_Project_Manager='1'";
@@ -1597,13 +1598,35 @@ function create_projectsuccess(){
   }
   else  {
    if($_SESSION['is_loggedin_admin']=="yes"){ 
-     $data['success']="project_create";
+    
+     $data="";
     $this->load->view('admin/front',$data); 
    }
    else   {
         redirect('user/login');
    }
  } 
+}
+public function task () {
+    if(!session_start()) {
+        redirect('user/login');
+    }
+    else {
+        if($_SESSION['is_loggedin_admin']=="yes"){
+            $data['success']="project_create";
+            $condition="GROUP BY project_name";
+            $query=$this->Loginmodel->getdata("projects",$condition);
+            $data['project_names']=$query;
+            $condition2="  WHERE is_Project_Manager='0' AND is_admin='0'";
+            $query_user=$this->Loginmodel->getdata("users",$condition2);
+            $data['user']=$query_user;
+             $this->load->view('admin/task',$data); 
+        }
+        else {
+            redirect('user/login');
+        }
+    }
+    
 }
 
  public function logout()  {
@@ -1627,149 +1650,8 @@ function create_projectsuccess(){
    }
   }
 }
-function user_management()
-	{  
-    
-    if(!session_start())
-    {
-        show_404(); exit();
-    }   else
-  {
-   
-   if(@$_SESSION['aname']=="karan@avika.in")
-   {
-	  $crud=new grocery_CRUD();
-          $crud->set_theme('flexigrid');	
-	  $crud->set_table('user');
-	  $crud->set_subject('Users');
-	 // $crud->required_fields('Email');
-          $crud->set_rules('Email','required');
-	  $crud->columns('CompanyName','FirstName','LastName','Email','Country');
-	  $output = $crud->render();	
-             	  $this->output->enable_profiler(TRUE);
-
-	  $this->_example_output($output);
-	
-	}
-	
 
 
-}
-}
 
-
-function usercontact_management()
-{
-     //echo $_SERVER['PHP_SELF']; die();
-  if(!session_start())
-  {
-    echo "You must first logged in to dee this page";
-   echo anchor('user/login','Login'); 
-   }
-  else
-  {
-   
-   if(@$_SESSION['aname']=="karan@avika.in")
-   {
-	  $crud=new grocery_CRUD();
-          $crud->set_theme('flexigrid');	
-	  $crud->set_table('usercontact');
-	  $crud->set_subject('Users');
-          	$crud->unset_export();
-	  $crud->required_fields('Email');
-	  $crud->columns('FirstName','LastName','Email','Title','CompanyName','Country');
-     
-             	  $this->output->enable_profiler(TRUE);
-
-	  $output = $crud->render();			
-	  $this->_example_outputs($output);
-	
-	}
-	
-  }
- }
- function member_managements()
-{
-     //echo $_SERVER['PHP_SELF']; die();
-  if(!session_start())
-  {
-    echo "You must first logged in to dee this page";
-   echo anchor('user/login','Login'); 
-        ECHO "Hello";  print_r(@$_SESSION);     die();
-
-   }
-  else
-  {
-
-   
-   if(@$_SESSION['aname']=="karan@avika.in")
-   {   	 
-	  $crud=new grocery_CRUD();
-      $crud->set_theme('flexigrid');	
-	  $crud->set_table('member');
-	  $crud->set_subject('Members');          
-	  $crud->required_fields('Email');
-	  $crud->columns('FirstName','LastName','Email','is_member');
-             	  $this->output->enable_profiler(TRUE);
-
-	  $output = $crud->render();			
-	  $this->_example_outputmember($output);	
-	}
-	
-  }
- }
- function paidmember_management()
-{
-     //echo $_SERVER['PHP_SELF']; die();
-  if(!session_start())
-  {
-    echo "You must first logged in to dee this page";
-   echo anchor('user/login','Login'); 
-   }
-  else
-  {
-   
-   if(@$_SESSION['aname']=="karan@avika.in")
-   {   	 
-	  $crud=new grocery_CRUD();
-      $crud->set_theme('flexigrid');	
-	  $crud->set_table('paid_member');
-	  $crud->set_subject('Members');          	 
-	  $crud->columns('Email','Transaction_id','Transaction_type','ACK','Pending_Reason','Total_amount');
-             	  $this->output->enable_profiler(TRUE);
-
-	  $output = $crud->render();			
-	  $this->_example_outputpaid($output);	
-	}
-	
-  }
- }
- function download_management()
-{
-     //echo $_SERVER['PHP_SELF']; die();
-  if(!session_start())
-  {
-    echo "You must first logged in to dee this page";
-   echo anchor('user/login','Login'); 
-   }
-  else
-  {
-   
-   if(@$_SESSION['aname']=="karan@avika.in")
-   {   	 
-	  $crud=new grocery_CRUD();
-      $crud->set_theme('flexigrid');	
-	  $crud->set_table('download_limit');
-	  $crud->set_subject('Downloader');          	 
-	  $crud->columns('Email', 'Download_limit', 'Download_status', 'Last_Download_time', 'Current_download');
-             	  $this->output->enable_profiler(TRUE);
-
-	  $output = $crud->render();			
-	  $this->_example_outputpaid($output);	
-	}
-	
-  }
- }
- 
 }
 ?>		
