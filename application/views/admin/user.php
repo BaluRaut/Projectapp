@@ -34,27 +34,7 @@
                     <!-- /.search form -->
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
-                        <li class="active">
-                            <a href="index.html">
-                                <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-                            </a>
-                        </li> 
-                        <li>
-                            <a href="<?php echo site_url("admin/projects/");?>">
-                                <i class="fa fa-th"></i> <span>Projects</span> <small class="badge pull-right bg-green"> </small>
-                            </a>
-                        </li>
-                        <li class="treeview">
-                            <a href="<?php echo site_url("admin/user/");?>">   
-                                <i class="fa fa-user"></i>
-                                <span>User</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?php echo site_url("admin/task/");?>">
-                                <i class="fa fa-tasks"></i> <span>Task</span>
-                            </a>
-                        </li>
+                      <?php include("sidebar.php"); ?>
                 </ul>
                 </section>
                 <!-- /.sidebar -->
@@ -64,6 +44,8 @@
                 <!-- Content Header (Page header) -->
              <!-- Main content -->
                 <section class="content">
+                    <?php if(@$_SESSION['user_created']=="success") {unset($_SESSION['user_created']); 
+                    echo "<span id='sess' style='color:#00A65A'> User Created Succesfully </span>" ; } ?>
                     <?php echo form_error("email"); ?>
                     <br/>
                     <?php echo form_error("password"); ?>
@@ -90,7 +72,8 @@
                             </td> </tr>
                          <tr> <td>   <label for="inputSuccess" class="control-label">Password :</label> </td>
                             <td> 
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                <input type="password" class="form-control" 
+                                       id="password" name="password" placeholder="Password">
                             </td>
                         </tr>
                         <tr> <td>                    
@@ -107,7 +90,12 @@
                        
 
                         <tr> <td> &nbsp; </td> <td> &nbsp; </td> </tr>
-                        <tr> <td> &nbsp; </td> <td>  <input type="submit" class="btn btn-primary" value="Create User" name="Submit"/> </td> 
+                        <tr>
+                            <td> &nbsp; 
+                            </td>
+                            <td>  
+                             <input type="submit" class="btn btn-primary" value="Create User" name="Submit"/>
+                            </td> 
                         </tr>
                     </table>
                    

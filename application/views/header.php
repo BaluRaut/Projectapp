@@ -50,7 +50,8 @@
                                         <a href="#" class="btn btn-default btn-flat">Profile</a>
                                     </div>
                                     <div class="pull-right">
-                                        <?php echo anchor('admin/logout', 'Sign out', array('title' => 'Sign out','class'=>'btn btn-default btn-flat')); ?>
+                                        <?php echo anchor('admin/logout', 'Sign out', 
+                                                array('title' => 'Sign out','class'=>'btn btn-default btn-flat')); ?>
                                      </div>
                                 </li>
                             </ul>

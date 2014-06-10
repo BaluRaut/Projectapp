@@ -34,27 +34,7 @@
                     <!-- /.search form -->
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
-                        <li class="active">
-                            <a href="index.html">
-                                <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-                            </a>
-                        </li> 
-                        <li>
-                            <a href="<?php echo site_url("admin/projects/");?>">
-                                <i class="fa fa-th"></i> <span>Projects</span> <small class="badge pull-right bg-green"> </small>
-                            </a>
-                        </li>
-                        <li class="treeview">
-                            <a href="<?php echo site_url("admin/user/");?>">   
-                                <i class="fa fa-user"></i>
-                                <span>User</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?php echo site_url("admin/task/");?>">
-                                <i class="fa fa-tasks"></i> <span>Task</span>
-                            </a>
-                        </li>
+                       <?php include("sidebar.php"); ?>
                 </ul>
                 </section>
                 <!-- /.sidebar -->

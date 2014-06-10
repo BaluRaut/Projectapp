@@ -43,62 +43,49 @@
             <!-- Right side column. Contains the navbar and content of the page -->
             <aside class="right-side">
                 <!-- Content Header (Page header) -->
-             <!-- Main content -->
+             <!-- Main content 
+             
+             Array ( [project_id] => 6 [project_name] => Android 
+             [Users] => swapnil@avika.in.sohail@avika.in. 
+             [Project_Manager] => dipesh@avika.in 
+             [Start_Date] => 2014-06-25 18:30:44 
+             [End_Date] => 2014-06-30 18:30:46 [Craeted] => 2014-06-06 18:31:30 ) 
+             -->
             
                 <section class="content">
-                    <div style="color:red" class="error_box">   </div>
-                    <?php 
-			$attributes = array( 'id' => 'myform','name'=> 'myform','class'=>'form-horizontal' );    
-			echo form_open_multipart('admin/projects',$attributes);
-			?>
-                    <input type="hidden" value="submit" name="flag"/>
-                    <table>
-                        <tr> <td> 
-                                <label for="inputSuccess" class="control-label"> Project Name:</label> </td>
-                            <td> 
-                        <input type="text" placeholder="Project Name" id="inputSuccess" name="project_name" class="form-control">
-                            </td> </tr>
-                        <tr> <td>                    
-                                <label for="inputSuccess" class="control-label"> Project Manager:</label> </td>
-                            <td> 
-                        <select id="project_manager" style="width:250px" name="project_manager">
-                        <?php //print_r($project_manager);
-                        foreach($project_manager as $key) {
-                          echo "<option value='".$key['email']."'>".$key['display_name']."</option>";
-                        }
-                        ?>                           
-                        </select>
-                            </td>
-
-                        <tr> <td>   <label for="inputSuccess" class="control-label"> Project users:</label> </td>
-                            <td> <select id="users" style="width:380px" name="project_users[]" multiple="" class="col-xs-5" name="users"> 
-                        <option value="None" id="none"> None </option> <?php //print_r($project_manager);
-                         foreach($user as $key) {
-                          echo "<option value='".$key['email']."'>".$key['display_name']."</option>";
-                        }
-                        ?>                           
-                        </select>
-                            </td>
-                        </tr>
-                        <tr> <td> 
-                                <label for="inputSuccess" class="control-label"> Start Date:</label> </td>
-                        <td> <input type="text" placeholder="Start Date" name="date_timepicker_start" 
-                                    id="date_timepicker_start" class="form-control col-xs-5">
-                        </td>
-                        </tr>
-                        <tr><td> 
-                                <label for="inputSuccess" class="control-label"> End Date:</label> </td>
-                            <td> 
-                        <input type="text" placeholder="End Date" name="date_timepicker_end" 
-                                    id="date_timepicker_end" class="form-control">
-                        </tr>
-                        <tr> <td> &nbsp; </td> <td> &nbsp; </td> </tr>
-                        <tr> <td> &nbsp; </td> <td>  <input type="submit" class="btn btn-primary" value="Create Project" name="Submit"/> </td> 
-                        </tr>
+                  <table id="example1" class="table table-bordered table-striped dataTable" aria-describedby="example1_info">
+<thead>
+<tr role="row">
+<th class="sorting_asc" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" 
+    colspan="1" style="width: 195px;" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Project ID</th>
+<th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" 
+    colspan="1" style="width: 270px;" aria-label="Browser: activate to sort column ascending">Project Name</th>
+<th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" 
+    colspan="1" style="width: 248px;" aria-label="Platform(s): activate to sort column ascending">Project Manager</th>
+<th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" 
+    colspan="1" style="width: 115px;" aria-label="CSS grade: activate to sort column ascending">Start Date</th>
+<th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" 
+    colspan="1" style="width: 115px;" aria-label="CSS grade: activate to sort column ascending">End Date</th>
+</tr>
+</thead>
+                        <?php
+                        
+                        foreach($project_names as $k) {
+                           $st=explode(" ",$k['Start_Date']);
+                           $et=explode(" ",$k['End_Date']);
+                           echo "<tr> ";
+                           echo "<td>".$k['project_id']."</td> ";
+                           echo "<td> ".$k['project_name']."</td>";
+                           echo "<td>".$k['Project_Manager']."</td> ";
+                           echo "<td> ".$st[0]."</td>";
+                           echo "<td> ".$et[0]."</td>";
+                           echo "</tr>";
+                        } ?>
+                        
+                        
                     </table>
-                   
-                    </form>
-     
+                    
+                    
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
         </div><!-- ./wrapper -->

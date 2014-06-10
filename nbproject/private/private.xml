@@ -9,6 +9,8 @@
             <file>file:/E:/xampp/htdocs/projectapp/application/controllers/user.php</file>
             <file>file:/E:/xampp/htdocs/projectapp/application/views/login.php</file>
             <file>file:/E:/xampp/htdocs/projectapp/application/views/header.php</file>
+            <file>file:/E:/xampp/htdocs/projectapp/application/views/admin/add_user.php</file>
+            <file>file:/E:/xampp/htdocs/projectapp/application/views/admin/user.php</file>
             <file>file:/E:/xampp/htdocs/projectapp/application/views/admin/project.php</file>
             <file>file:/E:/xampp/htdocs/projectapp/application/controllers/admin.php</file>
             <file>file:/E:/xampp/htdocs/projectapp/application/models/frontmodel.php</file>
