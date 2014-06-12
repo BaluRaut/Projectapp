@@ -76,7 +76,7 @@
                            echo "<tr> ";
                            echo "<td>".$k['project_id']."</td> ";
                            echo "<td> ".$k['project_name']."</td>";
-                           echo "<td>".$k['Project_Manager']."</td> ";
+                           echo "<td>".$k['display_name']."  &nbsp; &nbsp; (". $k['Project_Manager'].")</td> ";
                            echo "<td> ".$st[0]."</td>";
                            echo "<td> ".$et[0]."</td>";
                            echo "</tr>";

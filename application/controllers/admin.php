@@ -38,7 +38,7 @@ public function projects() {
   if(@$_SESSION['is_loggedin_admin']=="yes")  {
       
       if($this->input->post('flag')=="submit") {
-          $cnt=count($_POST['e9']);
+          $cnt=count($_POST['project_users']);
           //print_r($_POST);
           //echo $_POST['e9'][0];
           //die();
@@ -46,12 +46,18 @@ public function projects() {
           for($k=0;$k<$cnt;$k++){
              $add.=$_POST['project_users'][$k].".";
           }
+          $sdate=$this->input->post('date_timepicker_start');
+          $sdate=str_replace("/","-",$sdate);
+          $sdate.=":00";
+          $edate=$this->input->post('date_timepicker_end');
+          $edate=str_replace("/","-",$edate);
+          $edate.=":00";
           $data_insert=array(
                             'project_id'=>NULL,
                             'Project_Manager'=> $this->input->post('project_manager'),
                             'Users'=> "$add",
-                            'Start_Date'=>$this->input->post('date_timepicker_start'),
-                            'End_Date'=>$this->input->post('date_timepicker_end'),
+                            'Start_Date'=>$sdate,
+                            'End_Date'=>$edate,
                             'project_name'=>$this->input->post('project_name')
                             );
           $run=$this->Loginmodel->insert_table('projects',$data_insert);
@@ -155,15 +161,6 @@ public function user(){
         $this->form_validation->set_rules('email','email', 'required|valid_email|is_unique[users.email]');
         $this->form_validation->set_rules('password','password','required');
         if($this->form_validation->run()==TRUE)	{     
-            /*
-             * 
-             * Array ( [flag] => submit [name] => Pooja 
-             * [email] => pooja@avika.in 
-             * [password] => avika123 
-             * [role] => project_manager [Submit] => Create User ) 
-             * INSERT INTO `users`(`id`, `user_name`, `display_name`, `password`, `email`, 
-             * `activation_token`, `active`, `title`, `is_admin`, `is_Project_Manager`)
-             */
             if($_POST['role']=="project_manager"){
                       $data_insert=array(
                               'id'=>NULL,
@@ -227,6 +224,45 @@ public function user(){
       redirect('user/login');
   }
 }
+public function test() { 
+    if(!session_start()) {
+        redirect('user/logion');
+    }
+    else {
+      if($_SESSION['is_loggedin_admin']=="yes"){
+          
+          /*
+           *  SELECT * 
+           *        FROM projects
+           *      WHERE Users LIKE  '%swapnil@avika.in%'
+           * 
+           */
+             $email=trim($_POST['t']);
+            $email=explode(" ",$email);
+            $emails=$email[0];
+            $condition="";
+            $query=$this->Loginmodel->getdata(" projects WHERE Users LIKE '%$emails%' OR Project_Manager LIKE '%$emails%' ",$condition);
+            echo "<ul>";
+            $no=1;
+            foreach($query as $k) {
+            
+                echo"<li>". $k['project_name']. "</li> ";
+                $no=2;
+            }
+            if($no==1)
+                echo "<li> No Projects Assigened </li>";
+            echo "</ul>";
+           // $this->load->view('admin/project_detail',$data); 
+          
+      }
+      else {
+          redirect('user/login');
+      }
+          
+    }
+   
+    
+}
 public function project_management() {
   
     if(!session_start()) {
@@ -235,10 +271,32 @@ public function project_management() {
     else {
       if($_SESSION['is_loggedin_admin']=="yes"){
           
-            $condition="GROUP BY project_name";
-            $query=$this->Loginmodel->getdata("projects",$condition);
+            $condition="GROUP BY sp.project_name";
+            $query=$this->Loginmodel->getdata(" projects sp, users po
+WHERE sp.Project_Manager = po.email ",$condition);
             $data['project_names']=$query;
             $this->load->view('admin/project_detail',$data); 
+          
+      }
+      else {
+          redirect('user/login');
+      }
+          
+    }
+         
+}
+public function user_management() {
+  
+    if(!session_start()) {
+        redirect('user/logion');
+    }
+    else {
+      if($_SESSION['is_loggedin_admin']=="yes"){
+          
+            $condition=" GROUP BY id";
+            $query=$this->Loginmodel->getdata("users",$condition);
+            $data['user_names']=$query;
+            $this->load->view('admin/user_details',$data); 
           
       }
       else {
@@ -253,20 +311,19 @@ public function project_management() {
    redirect('user/login');
   }
   else  {
-   if($_SESSION['is_loggedin_admin']=="yes")   {
-   echo "you are successfully logout from our site you can";
-   unset($_SESSION['aname']);
-   unset($_SESSION['is_loggedin_admin']);
-   unset($_SESSION['admin_name']);
-   unset($_SESSION['admin_mail']);
-   session_destroy();
-   //echo anchor('user/login','Login');
-   redirect('admin/logoutsuccess');
-   }
-   else
-   {
+       if($_SESSION['is_loggedin_admin']=="yes")   {
+         echo "you are successfully logout from our site you can";
+         unset($_SESSION['aname']);
+         unset($_SESSION['is_loggedin_admin']);
+         unset($_SESSION['admin_name']);
+         unset($_SESSION['admin_mail']);
+         session_destroy();
+        //echo anchor('user/login','Login');
+        redirect('admin/logoutsuccess');
+       }
+       else   {
         redirect('user/login');
-   }
+      }
   }
 }
 
