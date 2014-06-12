@@ -59,6 +59,33 @@
                     </ul>
                 </div>
                 <?php } ?>
+                <?php if(isset($_SESSION['user_name'])) { ?>
+                <div class="navbar-right" style="">
+                    <ul class="nav navbar-nav">
+                        <!-- Messages: style can be found in dropdown.less-->
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <span>   <?php echo $_SESSION['user_name']; ?> <i class="caret"></i></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                     
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <?php echo anchor('user/logout', 'Sign out', 
+                                                array('title' => 'Sign out','class'=>'btn btn-default btn-flat')); ?>
+                                     </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <?php } ?>
             </nav>
     
       

@@ -45,8 +45,58 @@
                 <!-- Content Header (Page header) -->
              <!-- Main content -->
                 <section class="content">
-                     <?php  if(@$success=="task_create") { echo "<span> Task Created Succesfully </span>" ; } ?>
-                   
+                   <div class="row">                        
+                        <div class="col-md-12">
+                            <!-- The time line -->
+                            <ul class="timeline">
+                                <!-- timeline time label -->
+                                   <!-- /.timeline-label -->
+                                <!-- timeline item -->
+                                <?php foreach($project_names as $k) {   ?>
+                               <li class="time-label">
+<span class="bg-blue"> <?php $rt=$k['Start_Date'];
+echo date('d M. Y',strtotime("$rt")); ?> </span>
+</li>
+<li>
+<i class="fa fa-th-large bg-fuchsia"></i>
+<div class="timeline-item">
+
+<h3 class="timeline-header">
+    Project Name:&nbsp; &nbsp; <a href="#"> <?php echo $k['project_name']; ?></a>
+
+</h3>
+<div class="timeline-body"> 
+  <span class="bg-green"> Project start Date: &nbsp; &nbsp; &nbsp; <?php $rt=$k['Start_Date'];
+  echo date('d M. Y',strtotime("$rt")); ?> </span>
+   <br/>
+   <br/>
+   <span class="bg-red"> Project End Date: &nbsp; &nbsp; &nbsp; <?php $rt=$k['End_Date'];
+   echo date('d M. Y',strtotime("$rt")); ?> </span>
+</div>
+<div class="timeline-footer">
+
+</div>
+</div>
+</li>
+<li>
+<i class="fa fa-user bg-aqua"></i>
+<div class="timeline-item">
+
+<h3 class="timeline-header no-border">
+    Project Manager : &nbsp; &nbsp; <a href="#"> <?php echo $k['Project_Manager_Name']; ?></a>
+
+</h3>
+</div>
+</li>
+
+                                <?php } ?>
+                          
+                                <!-- END timeline item -->
+                                <!-- timeline item -->
+                           
+                            </ul>
+                        </div><!-- /.col -->
+                    </div>
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
         </div><!-- ./wrapper -->

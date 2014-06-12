@@ -29,7 +29,7 @@ public function front() {
        redirect('user/login'); exit();
   }
 }
-
+public function tests() {  print_r($_POST); }
 //******************Load Project Page**************************************
 public function projects() {
   if(!session_start())    {
@@ -76,9 +76,7 @@ public function projects() {
   }
   else
   {
-      echo "ok";
-      die();
-      show_404();  
+      redirect('user/login');
   }
 }
 public function task () {
@@ -92,26 +90,7 @@ public function task () {
             $cnt=count($_POST['project_users']);
                   
                $add="";
-               /*
-                * Array ( [flag] => submit [project_name] => Avika_Wesbite_Changes__7
-                *  [task_name] => Landing Page Testing
-                *  [project_users] => Array ( [0] => 4 [1] => 5 ) 
-                * [date_timepicker_start] => 2014-06-18 17:09:09 
-                * [date_timepicker_end] => 2014-06-28 17:09:11 
-                * [Submit] => Create Project )
-                * `tasks`(`task_id`,
-                *  `user_id`, 
-                * `task_name`, 
-                * `project_id`, 
-                *           *  `Start Date`, `End Date`)
-                * 
-                * NSERT INTO `tasks` ( `task_id` , `user_id` , `task_name` , `project_id` ,
-                *                      `is_opened` , `is_stopped` , `Start Time` , `End Time` ,
-                *                      `Start Date` , `End Date` )
-VALUES 
-                * 
-                */
-              
+                    
                $p_id=explode("__",$_POST['project_name']);
             for($k=0;$k<$cnt;$k++){
                 $rt=$this->Loginmodel->check_duplicate("tasks",$_POST['task_name'],$_POST['project_users'][$k],$p_id[1]);
@@ -319,7 +298,7 @@ public function user_management() {
          unset($_SESSION['admin_mail']);
          session_destroy();
         //echo anchor('user/login','Login');
-        redirect('admin/logoutsuccess');
+        redirect('user/login');
        }
        else   {
         redirect('user/login');

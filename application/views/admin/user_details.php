@@ -68,6 +68,7 @@
     colspan="1" style="width: 50px;" aria-label="CSS grade: activate to sort column ascending">Status</th>
 <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" 
     colspan="1" style="width: 50px;" aria-label="CSS grade: activate to sort column ascending">Projects</th>
+
 </tr>
 </thead>
     <?php
@@ -86,6 +87,7 @@
                    . "<span class='demo-callback".$k['id']."' class='tooltipstered'> "
                    . "<b style='display:none'> ".$k['email'] ." "
                    . "</b><button  class='btn btn-info btn-sm'>Assigned Projects</button></span> </a></td>";
+      
            echo "</tr>";
     
         } 
@@ -131,6 +133,6 @@
       </script>
  
         <?php } ?>
-
+      
 </body>
 </html>
