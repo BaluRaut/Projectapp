@@ -42,6 +42,11 @@ class Loginmodel extends CI_Model
        //  echo $this->db->last_query(); die(); 
          return @$user;  
 	}
+      function updatedata($sql) {
+          
+          $query=$this->db->query($sql);
+      }
+        
     function insert_table($table,$data){
         
          $this->db->insert($table,$data);

@@ -70,8 +70,7 @@
                                 <span>   <?php echo $_SESSION['user_name']; ?> <i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <!-- User image -->
-                     
+                                <!-- User image -->                     
                                 <li class="user-footer">
                                     <div class="pull-left">
                                         <a href="#" class="btn btn-default btn-flat">Profile</a>

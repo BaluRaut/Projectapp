@@ -115,7 +115,9 @@ public function task () {
             $_SESSION['success']="task_created";
             redirect('admin/task');
             exit();
-          } else {
+          }
+          
+          else {
             $data['success']="project_create";
             $condition="GROUP BY project_name";
             $query=$this->Loginmodel->getdata("projects",$condition);
@@ -209,18 +211,12 @@ public function test() {
     }
     else {
       if($_SESSION['is_loggedin_admin']=="yes"){
-          
-          /*
-           *  SELECT * 
-           *        FROM projects
-           *      WHERE Users LIKE  '%swapnil@avika.in%'
-           * 
-           */
-             $email=trim($_POST['t']);
+            $email=trim($_POST['t']);
             $email=explode(" ",$email);
             $emails=$email[0];
             $condition="";
-            $query=$this->Loginmodel->getdata(" projects WHERE Users LIKE '%$emails%' OR Project_Manager LIKE '%$emails%' ",$condition);
+            $query=$this->Loginmodel->getdata(" projects WHERE Users LIKE '%$emails%' "
+                    . "OR Project_Manager LIKE '%$emails%' ",$condition);
             echo "<ul>";
             $no=1;
             foreach($query as $k) {

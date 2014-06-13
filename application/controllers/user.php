@@ -13,19 +13,19 @@ class User   extends CI_Controller
 			$this->load->model('Loginmodel','',TRUE);
 			$this->load->database();					
 		        //$this->load->library('grocery_CRUD');
-                        
-			$this->form_validation->set_error_delimiters('<div style="color:red" id="errtext">', '</div>');
+                        $this->form_validation->set_error_delimiters('<div style="color:red" id="errtext">', '</div>');
 	}
         
 public function login() {
   //Check whether admin already logged in or not 
+    if(session_start()){
   if((isset($_SESSION['is_loggedin_admin']))){
     redirect('admin/front');
   }
   if((isset($_SESSION['is_loggedin_employee']))){
     redirect('user/front');
   }
-  
+    }
   if($this->input->post('flag')=="Login") { 
     $this->form_validation->set_rules('username', 'Username', 'required');
     $this->form_validation->set_rules('password', 'Password', 'required');
@@ -43,10 +43,8 @@ public function login() {
                   redirect('admin/front');
              }
              elseif($query[0]['is_admin']==0 && $query[0]['is_Project_Manager']==1) {
-                     
                       echo "I am Project Manager";
-                      die();
-                      
+                      die();                      
              }
              else {
                  session_start();
@@ -90,8 +88,7 @@ public function my_projects() {
   if(@$_SESSION['is_loggedin_employee']=="yes")  {
       $condition="";
       $query=$this->Loginmodel->getdata(" projects WHERE Users LIKE '%".$_SESSION['auser_mail']."%' ",$condition);
-      $data['project_names']=$query;
-    
+      $data['project_names']=$query;    
       $this->load->view('user/my_projects',@$data);
   }
   else
@@ -106,7 +103,13 @@ public function my_tasks() {
        redirect('user/login'); exit();
   } 
   if(@$_SESSION['is_loggedin_employee']=="yes")  {
-     $this->load->view('user/front',@$data);
+      $u_id=$_SESSION['user_id'];
+      
+      $condition=" WHERE t.is_opened='1' AND t.user_id=$u_id AND t.project_id=s.project_id ";
+      $query=$this->Loginmodel->getdata("  tasks t,projects s ","$condition");
+      $data['task_list']=$query;    
+    
+      $this->load->view('user/my_tasks',@$data);
   }
   else
   {
@@ -122,14 +125,102 @@ public function new_task() {
        redirect('user/login'); exit();
   } 
   if(@$_SESSION['is_loggedin_employee']=="yes")  {
-     $this->load->view('user/front',@$data);
+      
+       if($this->input->post('flag')=="submit") {
+        $p_id=explode("__",$_POST['project_name']);
+
+             $rt=$this->Loginmodel->check_duplicate("tasks",$_POST['task_name'],$_SESSION['user_id'],$p_id[1]);
+                if($rt==true) {
+                   $_SESSION['message']= "This task is already created";
+                }
+                else {
+                     $data_insert=array(
+                              'task_id'=>NULL,
+                              'task_name'=>$_POST['task_name'],
+                              'project_id'=> $p_id[1],
+                              'user_id'=> $_SESSION['user_id'],
+                              'is_opened'=>'1',
+                              'is_stopped'=>'1',
+                              'StartDate'=>$this->input->post('date_timepicker_start'),
+                              'EndDate'=>$this->input->post('date_timepicker_end')
+                              );
+                $run=$this->Loginmodel->insert_table('tasks',$data_insert);
+                }
+            
+       
+            $_SESSION['success']="task_created";
+            redirect('user/new_task');
+            exit();
+          }
+          else { 
+            $data['success']="project_create";
+            $email=$_SESSION['auser_mail'];
+            $condition=" WHERE Users LIKE  '%$email%' GROUP BY project_name";
+            $query=$this->Loginmodel->getdata("projects",$condition);
+            $data['project_names']=$query;
+            $this->load->view('user/create_task',$data);
+          }
   }
   else
   {
       redirect('user/login'); exit();
   }
 }
-
+ 
+public function updatetimer() {
+   
+  if(!session_start()) {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_employee']=="yes") {
+     if($_POST['update']=="update") {
+        $date = date('Y-m-d h:i:s A'); 
+       
+        $u=$_SESSION['u'];
+        $ids=explode("==",$_POST['updates']);
+        $project_d=$ids[1];
+        $task_id=$ids[0];
+        $t_id=explode("==",$_SESSION['add_time'.'_'.$task_id.'']);
+        $task_id=$t_id[1];
+        $time_add=$t_id[0];
+         $d1="$date";
+         $d2="$time_add";
+        $date1 = strtotime("$d1");
+        $date2 = strtotime("$d2");
+        $subTime = $date1 - $date2;
+        $y = ($subTime/(60*60*24*365));
+        $d = ($subTime/(60*60*24))%365;
+        $hrs = ($subTime/(60*60))%24;
+        $min = ($subTime/60)%60;
+        $sec=($subTime/60*60)%60;
+        $totalhours=$hrs.":".$min;
+        $sql="UPDATE timesheet set time_end='$date',totalhours='$totalhours' WHERE time_add='".$time_add."' AND task_id=$task_id  AND time_end IS NULL" ;
+        $query=$this->Loginmodel->updatedata("$sql");
+        $task_id=$t_id[1];
+        $sql="UPDATE tasks SET is_stopped='1' WHERE task_id=$task_id;";
+        $query=$this->Loginmodel->updatedata("$sql");
+   }
+     else {
+        $date=date('Y-m-d h:i:s A');
+        echo $date;
+        $user_id=$_SESSION['user_id']; 
+        $ids=explode("==",$_POST['update']);
+        $project_d=$ids[1];
+        $task_id=$ids[0];
+        $task_name=$ids[2];
+        $_SESSION['add_time'.'_'.$task_id.'']=$date."==".$task_id;
+        $sql="INSERT INTO `timesheet`(`time_id`,`time_add`,`project_id`,`task_id`,`user_id`) 
+        VALUES (NULL,'$date',$project_d,$task_id,$user_id);";
+        $query=$this->Loginmodel->updatedata("$sql");
+        $sql="UPDATE tasks SET is_stopped='0' WHERE task_id=$task_id;";
+        $query=$this->Loginmodel->updatedata("$sql");
+    }
+  }
+  else
+  {
+      redirect('user/login'); exit();
+  }
+}
 
  public function logout()  {
   if(!session_start()) {
