@@ -40,6 +40,7 @@ class Loginmodel extends CI_Model
         $query=$this->db->query($sql); 
         $user=$query->result_array();
        //  echo $this->db->last_query(); die(); 
+       // print_r($user);
          return @$user;  
 	}
       function updatedata($sql) {
@@ -47,6 +48,13 @@ class Loginmodel extends CI_Model
           $query=$this->db->query($sql);
       }
         
+      function single_query($sql) {
+          
+          $query=$this->db->query($sql);
+          $info=$query->result_array();
+       //  echo $this->db->last_query(); die(); 
+         return @$info;  
+      }
     function insert_table($table,$data){
         
          $this->db->insert($table,$data);

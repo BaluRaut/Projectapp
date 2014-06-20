@@ -5,13 +5,14 @@
         <title>Avika Project Management tool</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
          <?php include("/../loadcss.php");?>
+
     </head>
     <body class="skin-blue">
         <!-- header logo: style can be found in header.less -->
         <header class="header">
             <?php include("/../header.php"); ?>
         </header>
-        <div class="wrapper row-offcanvas row-offcanvas-left">
+        <div  id="pp" class="wrapper row-offcanvas row-offcanvas-left">
             <!-- Left side column. contains the logo and sidebar -->
             <aside class="left-side sidebar-offcanvas">
                 <!-- sidebar: style can be found in sidebar.less -->
@@ -41,7 +42,7 @@
             </aside>
 
             <!-- Right side column. Contains the navbar and content of the page -->
-            <aside class="right-side">
+            <aside id="details" class="right-side">
                 <!-- Content Header (Page header) -->
              <!-- Main content -->
                 <section class="content">
@@ -102,7 +103,7 @@ echo date('d M. Y',strtotime("$rt")); ?> </span>
         </div><!-- ./wrapper -->
 
         <!-- add new calendar event modal -->
-          <?php include("/../loadjs.php"); ?>      
+          <?php include("/../loadjs.php"); ?>     
 
     </body>
 </html>

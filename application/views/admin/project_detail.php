@@ -11,7 +11,7 @@
         <header class="header">
             <?php include("/../header.php"); ?>
         </header>
-        <div class="wrapper row-offcanvas row-offcanvas-left">
+        <div id="details" class="wrapper row-offcanvas row-offcanvas-left">
             <!-- Left side column. contains the logo and sidebar -->
             <aside class="left-side sidebar-offcanvas">
                 <!-- sidebar: style can be found in sidebar.less -->
@@ -88,11 +88,7 @@
                     
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
-        </div><!-- ./wrapper -->
-
-        <!-- add new calendar event modal -->
-          <?php include("/../loadjs.php"); ?>      
- <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>/js/jquery.datetimepicker.css"/ >
+            <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>/js/jquery.datetimepicker.css"/ >
 <script src="<?php echo base_url();?>js/jquery.datetimepicker.js"></script>
 <script src="<?php echo base_url();?>js/validate.js"></script>
     <script>
@@ -124,6 +120,7 @@
  });
 });
 </script> 
+
  <script type="text/javascript">
 var validator = new FormValidator('myform', [{
     name: 'date_timepicker_start',
@@ -166,5 +163,15 @@ var validator = new FormValidator('myform', [{
 });
 
 </script>
+<a class="use" id="use" href="#" >sss </a>
+        </div><!-- ./wrapper -->
+<script>
+   $(".use").on('click',function(e) {
+       alert("bar");
+             });     
+</script>
+        <!-- add new calendar event modal -->
+          <?php include("/../loadjs.php"); ?>      
+ 
 </body>
 </html>
