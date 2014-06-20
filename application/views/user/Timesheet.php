@@ -11,6 +11,15 @@
 	<header class="header">
 	<?php include("/../header.php"); ?>
 	</header>
+        <style>
+        input, button, select, textarea {
+        border: 1px solid purple;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        width: 105px;
+      }
+        </style>
 	<div class="wrapper row-offcanvas row-offcanvas-left">
 	<!-- Left side column. contains the logo and sidebar -->
 	<aside class="left-side sidebar-offcanvas">
@@ -44,6 +53,49 @@
 	<!-- Content Header (Page header) -->
 	<!-- Main content -->
 	<section class="content">
+            <div class="row">
+                <div class="col-lg-12">
+                            <div class="box box-solid">
+                                <div class="box-header">
+                                    <i class="fa fa-search bg-teal"></i>
+                                    <h3 class="box-title">Search:</h3>
+                                </div><!-- /.box-header -->
+                                <div class="box-body">
+                                   
+             &nbsp; &nbsp; Project : <select name="by_project_name" style="width:250px" 
+                                                   id="by_project_name" tabindex="-1" title="" 
+                                                   class="select2-offscreen">
+                                  <option value="All"><?php echo "All"; ?></option>
+
+                                               <?php foreach($project_names as $t) { ?>
+                                              <option value="<?php echo $t['project_name']; ?>"><?php echo $t['project_name']; ?></option>
+                                              <?php } ?>
+                                        </select > 
+                   &nbsp; &nbsp;      Task :  
+                   <select name="by_task_name" style="width:250px" 
+                                                   id="by_task_name" tabindex="-1" title="" 
+                                                   class="select2-offscreen">  
+                       <option value="All"><?php echo "All"; ?></option>
+                                            <?php foreach($tasks as $t) { ?>
+                                              <option value="<?php echo $t['task_name']; ?>"><?php echo $t['task_name']; ?></option>
+                                              <?php } ?>   
+                   </select >
+                   &nbsp; &nbsp;       Date :  <input type="text" placeholder="Date" name="date_timepicker" 
+                                   id="date_timepicker" > 
+            
+           &nbsp; &nbsp;  Date Range : <input type="text" placeholder="Start Date" name="date_timepicker_start" 
+                                    id="date_timepicker_start" > 
+                      &nbsp; &nbsp; To 
+                             <input type="text" placeholder="End Date" name="date_timepicker_end" 
+                                    id="date_timepicker_end" >
+                             &nbsp; &nbsp;  <input type="button" onclick="search();" class="btn btn-info btn-flat"    value="search"/>
+                             &nbsp; &nbsp;  <input type="button" onclick="clears();" class="btn btn-info btn-flat"    value="Clear"/>
+     
+                                    </div>
+                            </div>
+                </div>     
+            </div>
+            <div id="datasheet">
 	<table class="table table-bordered table-striped dataTable" id="example1" aria-describedby="example1_info">
 	<thead>
 	<tr role="row">
@@ -91,11 +143,107 @@
 	$mod++;
 	} // Main Loop close here
 	?>
-	</tbody></table>
+        </tbody></table> </div>
 	</section><!-- /.content -->
 	</aside><!-- /.right-side -->
 	</div><!-- ./wrapper -->
-	<?php include("/../loadjs.php"); ?>      
-	
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>/js/jquery.datetimepicker.css"/ >
+<script src="<?php echo base_url();?>js/jquery.datetimepicker.js"></script>
+<script src="<?php echo base_url();?>js/validate.js"></script>
+    <script>
+    $(document).ready(function() { 
+        $("#by_project_name").select2({ width: '112px' });
+        $("#by_task_name").select2({ width: '112px' });
+
+        var ingnore_key_codes = [8,9,13,16,17,18,19,20,27,32,33,34,35,36,37,38,39,40,44,45,46,48,49,50,51,52,53,54,55,56,57,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,96,97,98,99,100,101,102,103,104,105,106,107,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,144,145,186,187,188,189,190,191,219,220,221,222];
+        $('#date_timepicker_start').keydown(function(e){
+           if ($.inArray(e.keyCode, ingnore_key_codes) >= 0){
+              e.preventDefault();
+           }
+        });
+         $('#date_timepicker_end').keydown(function(e){
+           if ($.inArray(e.keyCode, ingnore_key_codes) >= 0){
+              e.preventDefault();
+           }
+        });
+    });
+    </script>
+ <script type="text/javascript">
+jQuery(function(){
+    jQuery('#date_timepicker').datetimepicker({
+  format:'Y-m-d' });
+ jQuery('#date_timepicker_start').datetimepicker({
+  format:'Y-m-d',
+  onShow:function( ct ){
+   this.setOptions({
+    maxDate:jQuery('#date_timepicker_end').val()?jQuery('#date_timepicker_end').val():false,formatDate:'Y-m-d'
+   })
+  },
+  timepicker:false
+ });
+ jQuery('#date_timepicker_end').datetimepicker({
+  format:'Y-m-d',
+  onShow:function( ct ){
+   this.setOptions({
+    minDate:jQuery('#date_timepicker_start').val()?jQuery('#date_timepicker_start').val():false,formatDate:'Y-m-d'
+   })
+  },
+  timepicker:false
+ });
+});
+</script> 
+<script type="text/javascript">
+   $("#by_task_name").change(function() {
+               $.ajax({
+                url: '<?php echo site_url('/user/timesheet_ajax/');?>',
+                type: 'POST',
+                data :'project_name='+$('#by_project_name').val()+'&by_task_name='+$('#by_task_name').val()+'&by_date='+$('#date_timepicker').val()
+                +'&start_date='+$("#date_timepicker_start").val()+'&end_date='+$("#date_timepicker_end").val(),
+                success: function(data) {
+                      $("#datasheet").html(data);
+                    }
+                });            
+             });
+     $("#by_project_name").change(function() {
+               $.ajax({
+                url: '<?php echo site_url('/user/timesheet_ajax/');?>',
+                type: 'POST',
+                data :'project_name='+$('#by_project_name').val()+'&by_task_name='+$('#by_task_name').val()+'&by_date='+$('#date_timepicker').val()
+                +'&start_date='+$("#date_timepicker_start").val()+'&end_date='+$("#date_timepicker_end").val(),
+                success: function(data) {
+                      $("#datasheet").html(data);
+                    }
+                });            
+    });
+    function search() {
+
+          $.ajax({
+                url: '<?php echo site_url('/user/timesheet_ajax/');?>',
+                type: 'POST',
+                data :'project_name='+$('#by_project_name').val()+'&by_task_name='+$('#by_task_name').val()+'&by_date='+$('#date_timepicker').val()
+                +'&start_date='+$("#date_timepicker_start").val()+'&end_date='+$("#date_timepicker_end").val(),
+                success: function(data) {
+                      $("#datasheet").html(data);
+                    }
+                });  
+        }
+    function clears() {
+    //alert("o");
+         $('#by_project_name').val("All");
+         $('#by_task_name').val("All");
+         $('#date_timepicker').val("");
+         $("#date_timepicker_end").val("");
+         $("#date_timepicker_start").val("");
+          $.ajax({
+                url: '<?php echo site_url('/user/timesheet_ajax/');?>',
+                type: 'POST',
+                data :'project_name='+$('#by_project_name').val()+'&by_task_name='+$('#by_task_name').val()+'&by_date='+$('#date_timepicker').val()
+                +'&start_date='+$("#date_timepicker_start").val()+'&end_date='+$("#date_timepicker_end").val(),
+                success: function(data) {
+                      $("#datasheet").html(data);
+                    }
+                });  
+        }
+</script>
 	</body>
 	</html>

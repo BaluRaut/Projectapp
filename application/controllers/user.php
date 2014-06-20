@@ -735,29 +735,7 @@ public function updatetimer() {
   }
 }
 
- public function logout()  {
-  if(!session_start()) {
-   redirect('user/login');
-  }
-  else  {
-        if($_SESSION['is_loggedin_employee']=="yes"){
-         echo "you are successfully logout from our site you can";
-         unset($_SESSION['user_name']);
-         unset($_SESSION['is_loggedin_employee']);
-         unset($_SESSION['auser_mail']);
-         unset( $_SESSION['user_id']);
-         session_destroy();
-        //echo anchor('user/login','Login');
-        redirect('user/login');
-       }
-       else   {
-        redirect('user/login');
-      }
-  }
-}
-
-
- public function update_task()  {
+  public function update_task()  {
   if(!session_start()) {
    redirect('user/login');
   }
@@ -792,18 +770,139 @@ public function updatetimer() {
         if($_SESSION['is_loggedin_employee']=="yes"){
             $email=$_SESSION['auser_mail'];
             $u_id=$_SESSION['user_id'];
-            $condition="WHERE ti.user_id =6 AND ti.time_end IS NOT NULL AND pr.project_id = ti.project_id
+            $condition="WHERE ti.user_id =$u_id AND ti.time_end IS NOT NULL AND pr.project_id = ti.project_id
                         AND ti.task_id = ts.task_id";
             $query=$this->Loginmodel->getdata("  timesheet ti, projects pr, tasks ts  ",$condition);
             $data['timesheet_details']=$query;
             $sql="SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( totalhours ) ) ) as times FROM timesheet WHERE user_id =$u_id";
             $totalhrs=$this->Loginmodel->single_query("$sql");
             $data['total_hrs_worked']=$totalhrs;
+            $condition=" WHERE Users LIKE  '%$email%' GROUP BY project_name";
+            $query=$this->Loginmodel->getdata("projects",$condition);
+            $data['project_names']=$query;
+            $condition=" WHERE user_id=$u_id ";
+            $query=$this->Loginmodel->getdata(" tasks ","$condition");
+            $data['tasks']=$query;
             $this->load->view('user/Timesheet',$data);
         }
         else   {
          redirect('user/login');
         }
+  }
+}
+
+public function timesheet_ajax()  {
+  if(!session_start()) {
+   redirect('user/login');
+  }
+  else  {
+        if($_SESSION['is_loggedin_employee']=="yes"){
+             //print_r($_POST);
+             $email=$_SESSION['auser_mail'];
+            $u_id=$_SESSION['user_id'];
+            /*
+             * 
+             * 
+    [project_name] => Android
+    [by_task_name] => Landing Page Testing
+    [by_date] => 
+    [start_date] => 
+    [end_date] => 
+             * 
+             */
+            extract($_POST);
+            $pr=($project_name=="All")? '' :  "  pr.project_name='".$_POST['project_name']."' AND " ;
+            $tname=($by_task_name=="All") ? '' : " ts.task_name='".$_POST['by_task_name']."'  AND ";
+            $date=($by_date=="") ? '': " ti.time_end LIKE '%".$_POST['by_date']."%'  AND ";
+            $enddate=($end_date!="" && $start_date!="") ? " DATE( time_end )  BETWEEN '".$_POST['start_date']."'
+AND '".$_POST['end_date']."'  AND " : '';
+        
+          
+            $condition="WHERE   $enddate   $pr   $tname   $date   ti.user_id =$u_id AND ti.time_end IS NOT NULL AND pr.project_id = ti.project_id
+                        AND ti.task_id = ts.task_id";
+            $query=$this->Loginmodel->getdata("  timesheet ti, projects pr, tasks ts  ",$condition);
+            $sql="SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( totalhours ) ) ) as times FROM timesheet ti, projects pr, tasks ts   $condition";
+            $totalhrs=$this->Loginmodel->single_query("$sql");
+            $data['total_hrs_worked']=$totalhrs;
+            $data['timesheet_details']=$query;
+            ?>
+<div id="data">
+<table class="table table-bordered table-striped dataTable" id="example1" aria-describedby="example1_info">
+	<thead>
+	<tr role="row">
+            <th class="sorting_asc" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" style="width: 195px;" aria-sort="ascending" 
+                aria-label="Rendering engine: activate to sort column descending">Project Name
+            </th>
+            <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
+                style="width: 270px;" aria-label="Browser: activate to sort column ascending">Task Name
+            </th>
+            <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
+                style="width: 115px;" aria-label="CSS grade: activate to sort column ascending">Total Hours
+            </th>
+        </tr>
+	</thead>
+	<tfoot>
+	<tr>
+	<th colspan="6">
+	<div class="row">
+	<div class="col-sm-6 order-number">Total Hours :</div>
+	<div class="col-sm-6 text-right order-total"> <?php echo @$totalhrs[0]['times']; ?></div>
+	</div>
+	</th>                                       </tr>
+	</tfoot>                     
+	<tbody role="alert" aria-live="polite" aria-relevant="all">
+	<?php 
+
+	$mod=1;
+	foreach($query as $times)  { 
+	if($mod%2==0){
+
+	?>        
+
+	<tr class="odd">
+	<td><?php echo  $times['project_name']; ?> </td>
+	<td style="color:#2A6496"><?php echo  $times['task_name'] ; ?> </td>
+	<td><?php echo  $times['totalhours'] ; ?>:00 </td>                         
+	</tr>
+	<?php  }  else { ?>
+	<tr class="even">
+	<td><?php echo  $times['project_name']; ?> </td>
+	<td style="color:#2A6496"><?php  echo  $times['task_name'] ; ?> </td>
+	<td><?php  echo  $times['totalhours'] ; ?>:00 </td>
+	</tr>
+	<?php } // Even Else part close 
+	$mod++;
+	} // Main Loop close here
+	?>
+	</tbody></table>
+</div>
+<?php
+       }
+       else   {
+        redirect('user/login');
+      }
+  }
+}
+
+
+public function logout()  {
+  if(!session_start()) {
+   redirect('user/login');
+  }
+  else  {
+        if($_SESSION['is_loggedin_employee']=="yes"){
+         echo "you are successfully logout from our site you can";
+         unset($_SESSION['user_name']);
+         unset($_SESSION['is_loggedin_employee']);
+         unset($_SESSION['auser_mail']);
+         unset( $_SESSION['user_id']);
+         session_destroy();
+        //echo anchor('user/login','Login');
+        redirect('user/login');
+       }
+       else   {
+        redirect('user/login');
+      }
   }
 }
 }

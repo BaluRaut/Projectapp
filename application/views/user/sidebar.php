@@ -29,7 +29,7 @@
                         </li>
                         
                         <script>
-   $(".use").on('click',function(e) {
+   $(".useD").on('click',function(e) {
        e.preventDefault();
        var links=$(this).attr('href');
          $.ajax({
