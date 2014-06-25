@@ -104,7 +104,6 @@
         </div><!-- ./wrapper -->
 
         <!-- add new calendar event modal -->
-          <?php include("/../loadjs.php"); ?>      
  <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>/js/jquery.datetimepicker.css"/ >
 <script src="<?php echo base_url();?>js/jquery.datetimepicker.js"></script>
 <script src="<?php echo base_url();?>js/validate.js"></script>

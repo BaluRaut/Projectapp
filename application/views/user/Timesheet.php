@@ -12,14 +12,22 @@
 	<?php include("/../header.php"); ?>
 	</header>
         <style>
-        input, button, select, textarea {
-        border: 1px solid purple;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
-        width: 105px;
+        input, button,  textarea {
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 69px;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+            color: purple;
+            font-family: inherit;
+            font-size: 14px;
+            height: 34px;
+            line-height: 1.42857;
+            padding: 6px 12px;
+            transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+            width: 105px;
       }
-        </style>
+     </style>
 	<div class="wrapper row-offcanvas row-offcanvas-left">
 	<!-- Left side column. contains the logo and sidebar -->
 	<aside class="left-side sidebar-offcanvas">
@@ -59,7 +67,8 @@
                                 <div class="box-header">
                                     <i class="fa fa-search bg-teal"></i>
                                     <h3 class="box-title">Search:</h3>
-                                </div><!-- /.box-header -->
+<span  id="export" style="float:right;" onclick="download()" class="btn btn-info btn-flat"value="Export"> Export </span>
+                              </div><!-- /.box-header -->
                                 <div class="box-body">
                                    
              &nbsp; &nbsp; Project : <select name="by_project_name" style="width:250px" 
@@ -229,8 +238,9 @@ jQuery(function(){
         }
     function clears() {
     //alert("o");
-         $('#by_project_name').val("All");
-         $('#by_task_name').val("All");
+    $("#by_project_name").select2("val", "All");
+     $("#by_task_name").select2("val", "All");
+
          $('#date_timepicker').val("");
          $("#date_timepicker_end").val("");
          $("#date_timepicker_start").val("");
@@ -244,6 +254,19 @@ jQuery(function(){
                     }
                 });  
         }
+        
+          function download()  {
+      
+        $.ajax({
+                url: '<?php echo site_url('/user/make_data/');?>',
+                type: 'POST',
+                data :'project_name='+$('#by_project_name').val()+'&by_task_name='+$('#by_task_name').val()+'&by_date='+$('#date_timepicker').val()+'&start_date='+$("#date_timepicker_start").val()+'&end_date='+$("#date_timepicker_end").val(),
+                success: function(data) {
+                   document.location.href='<?php echo site_url('/user/download_data/');?>'
+                    }
+                }); 
+        
+       }
 </script>
 	</body>
 	</html>

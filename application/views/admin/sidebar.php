@@ -39,3 +39,20 @@
                                 <li><a href="<?php echo site_url("admin/user_management/");?>"><i class="fa fa-angle-double-right"></i> User Settings</a></li>
                             </ul>
                         </li> 
+                        <li>
+                            <a href="<?php echo site_url("admin/timesheet_of_projects/");?>">
+                                <i class="fa fa-clock-o"></i> <span>Timesheet</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?php echo site_url("admin/task_status/");?>">
+                                <i class="fa fa-info"></i> <span>Task Status</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?php echo site_url("admin/current_running_task/");?>">
+                                <i class="fa fa-tasks"></i> <span>Live Running Tasks</span>
+                            </a>
+                        </li>
+                        
+                        

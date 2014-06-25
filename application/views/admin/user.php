@@ -103,7 +103,6 @@
                  </section><!-- /.content -->
             </aside><!-- /.right-side -->
         </div><!-- ./wrapper -->
-       <?php include("/../loadjs.php"); ?>      
 <script src="<?php echo base_url();?>js/validate.js"></script>
 
 <script type="text/javascript">

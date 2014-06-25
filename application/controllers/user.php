@@ -63,6 +63,80 @@ public function login() {
  $this->load->view('login',@$data); 
  
 }  //End of the Login function
+
+
+
+public function make_data() {
+  if(!session_start())    {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_employee']=="yes")  {
+
+    extract($_POST);
+    $pr=($project_name=="All")? '' :  "  pr.project_name='".$_POST['project_name']."' AND " ;
+    $tname=($by_task_name=="All") ? '' : " ts.task_name='".$_POST['by_task_name']."'  AND ";
+    $date=($by_date=="") ? '': " ti.time_end LIKE '%".$_POST['by_date']."%'  AND ";
+    $enddate=($end_date!="" && $start_date!="") ? " DATE( time_end )  BETWEEN '".$_POST['start_date']."'
+                                                    AND '".$_POST['end_date']."'  AND " : '';
+ //   $users=($user_name=="All")? '':"   ti.user_id=".$_POST['user_name']."  AND ";
+      $u_id=$_SESSION['user_id'];
+    $condition="WHERE  ti.user_id=$u_id  AND   $enddate   $pr   $tname   $date   
+                ti.user_id =ts.user_id AND ti.time_end IS NOT NULL AND pr.project_id = ti.project_id
+                AND ti.task_id = ts.task_id";
+    $_SESSION['download_query']="$condition";
+    
+
+  }
+  else
+  {
+       redirect('user/login'); exit();
+  }
+}
+
+
+
+public function download_data() {
+ 
+  if(!session_start())    {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_employee']=="yes")  {
+    
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=Timesheet_'.date('Y-m-d h:i:s A') .'.csv');
+
+        // create a file pointer connected to the output stream
+        $output = fopen('php://output', 'w');
+
+        // output the column headings
+        fputcsv($output, array('Project Name', 'Task Name', 'Start Time','End Time','Total Hours'));
+
+      
+    $condition=$_SESSION['download_query']; 
+
+        $query=$this->Loginmodel->csvdata(" pr.project_name, ts.task_name, ti.Time_Add, ti.Time_end, ti.totalhours FROM  timesheet ti, projects pr, tasks ts  ",$condition);
+
+        foreach($query as $row)
+        fputcsv($output, $row);
+        
+        $sql="SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( totalhours ) ) ) as times "
+            . " FROM timesheet ti, projects pr, tasks ts   $condition";
+    
+        $totalhrs=$this->Loginmodel->single_query("$sql");
+        $thr=$totalhrs[0]['times'];
+        fputcsv($output,array(' ',' ',' ','Total Hours:',$thr));
+
+      
+  }
+  else
+  {
+       redirect('user/login'); exit();
+  }
+}
+
+
+
+
 //Front Functionality
 public function front() {   
   if(!session_start())    {
@@ -102,8 +176,10 @@ public function my_tasks() {
   if(@$_SESSION['is_loggedin_employee']=="yes")  {
       $u_id=$_SESSION['user_id'];
       
-      $condition=" WHERE t.is_opened='1' AND t.user_id=$u_id AND t.project_id=s.project_id AND t.task_completed=0";
+      $condition=" WHERE t.is_opened='1' AND t.user_id=$u_id AND t.project_id=s.project_id ";
       $query=$this->Loginmodel->getdata("  tasks t,projects s ","$condition");
+   //echo $this->db->last_query(); die();
+      //die();
       $data['task_list']=$query;    
       $emails=$_SESSION['auser_mail'];
       $condition=" WHERE Users LIKE '%$emails%'";
@@ -143,7 +219,7 @@ public function new_task() {
                      $data_insert=array(
                               'task_id'=>NULL,
                               'task_name'=>$_POST['task_name'],
-                              'project_id'=> $p_id[1],
+                              'project_id'=> str_replace("_","",$p_id[1]),
                               'user_id'=> $_SESSION['user_id'],
                               'is_opened'=>'1',
                               'is_stopped'=>'1',
@@ -151,6 +227,8 @@ public function new_task() {
                               'EndDate'=>$this->input->post('date_timepicker_end')
                               );
                 $run=$this->Loginmodel->insert_table('tasks',$data_insert);
+                //echo $this->db->last_query();
+                //die();
                 }
             $_SESSION['success']="task_created";
             redirect('user/new_task');
@@ -688,8 +766,6 @@ public function updatetimer() {
   if(@$_SESSION['is_loggedin_employee']=="yes") {
      if($_POST['update']=="update") {
         $date = date('Y-m-d h:i:s A'); 
-       
-        $u=$_SESSION['u'];
         $ids=explode("==",$_POST['updates']);
         $project_d=$ids[1];
         $task_id=$ids[0];
@@ -735,7 +811,7 @@ public function updatetimer() {
   }
 }
 
-  public function update_task()  {
+public function update_task()  {
   if(!session_start()) {
    redirect('user/login');
   }
@@ -797,30 +873,21 @@ public function timesheet_ajax()  {
   }
   else  {
         if($_SESSION['is_loggedin_employee']=="yes"){
-             //print_r($_POST);
-             $email=$_SESSION['auser_mail'];
+            $email=$_SESSION['auser_mail'];
             $u_id=$_SESSION['user_id'];
-            /*
-             * 
-             * 
-    [project_name] => Android
-    [by_task_name] => Landing Page Testing
-    [by_date] => 
-    [start_date] => 
-    [end_date] => 
-             * 
-             */
             extract($_POST);
             $pr=($project_name=="All")? '' :  "  pr.project_name='".$_POST['project_name']."' AND " ;
             $tname=($by_task_name=="All") ? '' : " ts.task_name='".$_POST['by_task_name']."'  AND ";
             $date=($by_date=="") ? '': " ti.time_end LIKE '%".$_POST['by_date']."%'  AND ";
             $enddate=($end_date!="" && $start_date!="") ? " DATE( time_end )  BETWEEN '".$_POST['start_date']."'
-AND '".$_POST['end_date']."'  AND " : '';
+                                                            AND '".$_POST['end_date']."'  AND " : '';
         
           
             $condition="WHERE   $enddate   $pr   $tname   $date   ti.user_id =$u_id AND ti.time_end IS NOT NULL AND pr.project_id = ti.project_id
                         AND ti.task_id = ts.task_id";
+           
             $query=$this->Loginmodel->getdata("  timesheet ti, projects pr, tasks ts  ",$condition);
+           
             $sql="SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( totalhours ) ) ) as times FROM timesheet ti, projects pr, tasks ts   $condition";
             $totalhrs=$this->Loginmodel->single_query("$sql");
             $data['total_hrs_worked']=$totalhrs;

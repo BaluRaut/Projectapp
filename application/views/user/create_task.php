@@ -126,43 +126,43 @@
         });
     });
     </script>
-   <script type="text/javascript">
-   jQuery(function(){          
+<script type="text/javascript">
+jQuery(function(){          
     var edate="";
     var edt="";
     var std="";
+    
+    edate=jQuery("#project_name").val();         //alert(edate);
+    edt=jQuery("#end"+edate).val();            
+    std=jQuery("#std"+edate).val();
+    
     jQuery("#project_name").on("change", function() {
          edate=jQuery("#project_name").val();
-         //alert(edate);
-        edt=jQuery("#end"+edate).val();
-            
-        std=jQuery("#std"+edate).val();
+         edt=jQuery("#end"+edate).val();
+         std=jQuery("#std"+edate).val();
     });
- jQuery('#date_timepicker_start').datetimepicker({
-  format:'Y-m-d H:i:s',
-  onShow:function( ct ){
-   //alert(edt);
-
-  
-   this.setOptions({       
-maxDate:edt,formatDate:'Y-m-d H:i:s',
-minDate:std,formatDate:'Y-m-d H:i:s'
-
-   })
-  },
-  timepicker:false
- });
- jQuery('#date_timepicker_end').datetimepicker({
-  format:'Y-m-d H:i:s',
-  onShow:function( ct ){
-   this.setOptions({
-    maxDate:edt,formatDate:'Y-m-d H:i:s',
-    //minDate:std,formatDate:'Y-m-d H:i:s'
-    minDate:jQuery('#date_timepicker_start').val()?jQuery('#date_timepicker_start').val():false
-   })
-  },
-  timepicker:false
- });
+    
+    jQuery('#date_timepicker_start').datetimepicker({
+        format:'Y-m-d H:i:s',
+        onShow:function( ct ){
+            this.setOptions({       
+            maxDate:edt,formatDate:'Y-m-d H:i:s',
+            minDate:std,formatDate:'Y-m-d H:i:s'
+            })
+        },
+        timepicker:false
+    });
+    
+    jQuery('#date_timepicker_end').datetimepicker({
+        format:'Y-m-d H:i:s',
+        onShow:function( ct ){
+            this.setOptions({
+             maxDate:edt,formatDate:'Y-m-d H:i:s',
+             minDate:jQuery('#date_timepicker_start').val()?jQuery('#date_timepicker_start').val():edt
+            })
+        },
+        timepicker:false
+    });
 });
 </script> 
 <script type="text/javascript">

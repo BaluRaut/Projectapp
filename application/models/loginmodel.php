@@ -43,6 +43,16 @@ class Loginmodel extends CI_Model
        // print_r($user);
          return @$user;  
 	}
+        
+   function csvdata($tblname,$condition){	
+
+        $sql = "SELECT  " . $tblname. "  $condition  ";
+        $query=$this->db->query($sql); 
+        $user=$query->result_array();
+       //  echo $this->db->last_query(); die(); 
+       // print_r($user);
+         return @$user;  
+	}
       function updatedata($sql) {
           
           $query=$this->db->query($sql);

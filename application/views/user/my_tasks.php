@@ -193,6 +193,7 @@
 	AND 
 	ti.project_id=$p_jectid LIMIT 1";
         $query=mysql_query($sql);
+        $time="";
 	while($row=mysql_fetch_array($query)) { 
 	$time=$row['time_add']; 
 	}
