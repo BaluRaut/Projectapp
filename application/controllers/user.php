@@ -78,11 +78,12 @@ public function make_data() {
     $date=($by_date=="") ? '': " ti.time_end LIKE '%".$_POST['by_date']."%'  AND ";
     $enddate=($end_date!="" && $start_date!="") ? " DATE( time_end )  BETWEEN '".$_POST['start_date']."'
                                                     AND '".$_POST['end_date']."'  AND " : '';
- //   $users=($user_name=="All")? '':"   ti.user_id=".$_POST['user_name']."  AND ";
-      $u_id=$_SESSION['user_id'];
+
+    $u_id=$_SESSION['user_id'];
     $condition="WHERE  ti.user_id=$u_id  AND   $enddate   $pr   $tname   $date   
                 ti.user_id =ts.user_id AND ti.time_end IS NOT NULL AND pr.project_id = ti.project_id
                 AND ti.task_id = ts.task_id";
+    
     $_SESSION['download_query']="$condition";
     
 
@@ -326,7 +327,7 @@ public function filter_task(){
         $subTime = $date1 - $date2;
         $y = ($subTime/(60*60*24*365));
         $d = ($subTime/(60*60*24))%365;
-        $hrs = ($subTime/(60*60))%24;
+        $hrs = ($d*24);
         $min = ($subTime/60)%60;
         $sec=($subTime/60*60)%60;
        	$task_id=$k['task_id'];
@@ -779,7 +780,7 @@ public function updatetimer() {
         $subTime = $date1 - $date2;
         $y = ($subTime/(60*60*24*365));
         $d = ($subTime/(60*60*24))%365;
-        $hrs = ($subTime/(60*60))%24;
+        $hrs = ($d*24);
         $min = ($subTime/60)%60;
         $sec=($subTime/60*60)%60;
         $totalhours=$hrs.":".$min;

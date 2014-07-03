@@ -197,16 +197,23 @@
 	while($row=mysql_fetch_array($query)) { 
 	$time=$row['time_add']; 
 	}
-	$uu=date('Y-m-d h:i:s A');
+	$uu=date('Y/m/d h:i:s A');
         $s="$uu";
         //$ty="$time";
         $ss="$time";
+        $ss=str_replace("-","/",$ss);
+        //echo " Old Time: $ss  <br/>  New Time:     $s  <br/>";
         $date1 = strtotime("$s");
         $date2 = strtotime("$ss");
         $subTime = $date1 - $date2;
         $y = ($subTime/(60*60*24*365));
         $d = ($subTime/(60*60*24))%365;
-        $hrs = ($subTime/(60*60))%24;
+        $hrs = ($d*24);
+        //echo $date1;
+        //echo $date2;
+        
+       // echo $hrs;
+      //  die();
         $min = ($subTime/60)%60;
         $sec=($subTime/60*60)%60;
        	$task_id=$k['task_id'];
