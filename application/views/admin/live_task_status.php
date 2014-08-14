@@ -187,7 +187,16 @@
         $subTime = $date1 - $date2;
         $y = ($subTime/(60*60*24*365));
         $d = ($subTime/(60*60*24))%365;
-        $hrs = ($d*24);
+              $hrs=($d*24);
+        if($d==0)
+        {
+             $hrs = ($subTime/(60*60)%24);
+            //$hrs=($subtime/())
+        }
+        else {
+            
+            $hrs+=($subTime/(60*60)%24);
+        }
         $min = ($subTime/60)%60;
         $sec=($subTime/60*60)%60;
         $task_id=$k['task_id'];

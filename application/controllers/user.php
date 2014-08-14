@@ -6,6 +6,7 @@ class User   extends CI_Controller
             parent::__construct();
 			$this->load->helper('url');
 			$this->load->helper('form');
+                        $this->load->helper('date');
 			$this->load->library('form_validation');
 			$this->load->helper('language');
 		        $this->lang->load('message', 'english');
@@ -65,6 +66,126 @@ public function login() {
 }  //End of the Login function
 
 
+/*public function _remap($method)
+{
+    echo $method;
+  
+    if ($method == 'some_method')
+    {
+        $this->my_projects();
+    }
+    else
+    {
+        $this->front();
+    }
+}
+ * 
+ */
+public function my_calendar(){
+  if(!session_start())    {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_employee']=="yes")  {
+      
+      $this->load->view('user/my_calendar');
+      
+  }else {
+       redirect('user/login'); exit();
+  }
+    
+    
+}
+
+public function project_gantt_charts(){
+  if(!session_start())    {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_employee']=="yes")  {
+      
+      $u_id=$_SESSION['user_id'];
+        $condition="";
+        $query=$this->Loginmodel->getdata(" projects WHERE Users LIKE '%".$_SESSION['auser_mail']."%' ",$condition);
+        $r=array();
+        foreach($query as $row) {
+        $st=explode(" ",$row['Start_Date']);
+        $et=explode(" ",$row['End_Date']);
+        $r[]=array(
+        'label'=>$row['project_name'],
+        'start'=>$st[0],
+        'end'=>$et[0],
+        'calss'=>'urgent',
+        'st'=>''
+           );
+        }
+      $data['mydata']=$r;
+      $this->load->view('user/project_gantt_charts',$data);
+
+      
+  }else {
+       redirect('user/login'); exit();
+  }
+      
+}
+
+
+public function task_gantt_charts(){
+  if(!session_start())    {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_employee']=="yes")  {
+      
+        $u_id=$_SESSION['user_id'];
+        $condition="";
+        $query=$this->Loginmodel->getdata(" tasks WHERE user_id=$u_id ",$condition);
+        $r=array();
+        foreach($query as $row) {
+        $st=explode(" ",$row['StartDate']);
+        $et=explode(" ",$row['EndDate']);
+        $r[]=array(
+        'label'=>$row['task_name'],
+        'start'=>$st[0],
+        'end'=>$et[0],
+        'calss'=>'urgent',
+        'st' => $row['task_status']
+           );
+        }
+      $data['mydata']=$r;
+      $this->load->view('user/task_gantt_charts',$data);
+      
+  }else {
+       redirect('user/login'); exit();
+  }
+        
+}
+
+
+public function calendar_ajax(){
+  if(!session_start())    {
+       redirect('user/login'); exit();
+  } 
+  if(@$_SESSION['is_loggedin_employee']=="yes")  {
+        $u_id=$_SESSION['user_id'];
+        $condition="";
+        $query=$this->Loginmodel->getdata(" tasks WHERE user_id=$u_id ",$condition);
+        $r=array();
+        foreach($query as $row) {
+        $st=explode(" ",$row['StartDate']);
+        $et=explode(" ",$row['EndDate']);
+        $r[]=array(
+        'id'=>$row['task_id'],
+        'title'=>$row['task_name'],
+        'start'=>$st[0],
+        'end'=>$et[0],
+        'textcolor'=>'red',
+        'tip'=>"Project  date  ".$st[0]."  to  ".$et[0]."",
+        );
+       }
+     echo json_encode($r);      
+  }else {
+       redirect('user/login'); exit();
+  }    
+    
+}
 
 public function make_data() {
   if(!session_start())    {
@@ -134,10 +255,6 @@ public function download_data() {
        redirect('user/login'); exit();
   }
 }
-
-
-
-
 //Front Functionality
 public function front() {   
   if(!session_start())    {
@@ -151,6 +268,7 @@ public function front() {
       redirect('user/login'); exit();
   }
 }
+
 
 public function my_projects() {
    
@@ -168,6 +286,7 @@ public function my_projects() {
       redirect('user/login'); exit();
   }
 }
+
 
 public function my_tasks() {
    
@@ -327,7 +446,16 @@ public function filter_task(){
         $subTime = $date1 - $date2;
         $y = ($subTime/(60*60*24*365));
         $d = ($subTime/(60*60*24))%365;
-        $hrs = ($d*24);
+             $hrs=($d*24);
+        if($d==0)
+        {
+             $hrs = ($subTime/(60*60)%24);
+            //$hrs=($subtime/())
+        }
+        else {
+            
+            $hrs+=($subTime/(60*60)%24);
+        }
         $min = ($subTime/60)%60;
         $sec=($subTime/60*60)%60;
        	$task_id=$k['task_id'];
@@ -780,7 +908,16 @@ public function updatetimer() {
         $subTime = $date1 - $date2;
         $y = ($subTime/(60*60*24*365));
         $d = ($subTime/(60*60*24))%365;
-        $hrs = ($d*24);
+            $hrs=($d*24);
+        if($d==0)
+        {
+             $hrs = ($subTime/(60*60)%24);
+            //$hrs=($subtime/())
+        }
+        else {
+            
+            $hrs+=($subTime/(60*60)%24);
+        }
         $min = ($subTime/60)%60;
         $sec=($subTime/60*60)%60;
         $totalhours=$hrs.":".$min;
@@ -839,6 +976,31 @@ public function update_task()  {
       }
   }
 }
+
+
+
+
+public function delete_ajax()  {
+  if(!session_start()) {
+   redirect('user/login');
+  }
+  else  {
+        if($_SESSION['is_loggedin_employee']=="yes"){
+                                        
+          $time_id=$_POST['time_id'];
+          $sql="DELETE FROM `timesheet` WHERE time_id=$time_id";
+    
+        $this->Loginmodel->updatedata($sql);  
+        //  echo $this->db->last_query(); die(); 
+          
+       }
+       else   {
+        redirect('user/login');
+      }
+  }
+}
+
+
  public function my_timesheet()  {
   if(!session_start()) {
    redirect('user/login');
@@ -907,6 +1069,12 @@ public function timesheet_ajax()  {
             <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
                 style="width: 115px;" aria-label="CSS grade: activate to sort column ascending">Total Hours
             </th>
+                   <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
+                style="width: 20px;" aria-label="CSS grade: activate to sort column ascending">Edit
+            </th>
+                   <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
+                style="width: 20px;" aria-label="CSS grade: activate to sort column ascending">Delete
+            </th>
         </tr>
 	</thead>
 	<tfoot>
@@ -930,14 +1098,23 @@ public function timesheet_ajax()  {
 	<tr class="odd">
 	<td><?php echo  $times['project_name']; ?> </td>
 	<td style="color:#2A6496"><?php echo  $times['task_name'] ; ?> </td>
-	<td><?php echo  $times['totalhours'] ; ?>:00 </td>                         
-	</tr>
+	<td><?php echo  $times['totalhours'] ; ?>:00 </td>    
+           <td class="bg bg-light-blue">  <a href="<?php echo site_url('user/edit_timesheet/?timesheet_id='.$times['time_id'].'&task_id='.$times['task_id'].'');?>" > Edit </a> </td> 
+          <td class="bg bg-red" data-widget="remove"> 
+            <a href="#" onclick="deletes(<?php  echo  $times['time_id'] ; ?>);" style="color:white" id="delete_record"> Delete </a> 
+        </td>	
+        </tr>
+
 	<?php  }  else { ?>
 	<tr class="even">
 	<td><?php echo  $times['project_name']; ?> </td>
 	<td style="color:#2A6496"><?php  echo  $times['task_name'] ; ?> </td>
 	<td><?php  echo  $times['totalhours'] ; ?>:00 </td>
-	</tr>
+        <td class="bg bg-light-blue">  <a href="<?php echo site_url('user/edit_timesheet/?timesheet_id='.$times['time_id'].'&task_id='.$times['task_id'].'');?>" > Edit </a> </td> 
+        <td class="bg bg-red" data-widget="remove"> 
+            <a href="#" onclick="deletes(<?php  echo  $times['time_id'] ; ?>);" style="color:white" id="delete_record"> Delete </a> 
+        </td>	
+        </tr>
 	<?php } // Even Else part close 
 	$mod++;
 	} // Main Loop close here
@@ -945,6 +1122,69 @@ public function timesheet_ajax()  {
 	</tbody></table>
 </div>
 <?php
+       }
+       else   {
+        redirect('user/login');
+      }
+  }
+}
+
+public function update_task_timesheet(){
+    
+    if(!session_start()) {
+   redirect('user/login');
+  }
+  else  {
+        if($_SESSION['is_loggedin_employee']=="yes"){
+        $time_add=$_POST['datestart']." ".$_POST['logfromhr'].":".$_POST['logfrommins'].":00 ".strtoupper($_POST['logfromampm']);
+        $time_end=$_POST['dateend']." ".$_POST['logtohr'].":".$_POST['logtomins'].":00 ".strtoupper($_POST['logtoampm']);
+        extract($_POST);
+         $d1="$time_end";
+         $d2="$time_add";
+        $date1 = strtotime("$d1");
+        $date2 = strtotime("$d2");
+        $subTime = $date1 - $date2;
+        $y = ($subTime/(60*60*24*365));
+        $d = ($subTime/(60*60*24))%365;
+            $hrs=($d*24);
+        if($d==0)
+        {
+             $hrs = ($subTime/(60*60)%24);
+            //$hrs=($subtime/())
+        }
+        else {
+            
+            $hrs+=($subTime/(60*60)%24);
+        }
+        $min = ($subTime/60)%60;
+        $sec=($subTime/60*60)%60;
+        $totalhours=$hrs.":".$min; 
+        $totalhours=str_replace("-","",$totalhours);
+        $sql="UPDATE timesheet set totalhours='$totalhours' , time_add='$time_add', time_end='$time_end' WHERE  time_id=$time_id AND task_id=$task_id";
+             $query=$this->Loginmodel->updatedata("$sql");
+     
+}
+       else   {
+        redirect('user/login');
+      }
+  }
+    
+}
+public function edit_timesheet()  {
+  if(!session_start()) {
+   redirect('user/login');
+  }
+  else  {
+        if($_SESSION['is_loggedin_employee']=="yes"){
+        $time_id=$_GET['timesheet_id'];
+        $task_id=$_GET['task_id'];
+        $sql="";
+        $u_id=$_SESSION['user_id'];
+        $condition="WHERE ti.user_id =$u_id  AND ti.task_id = ts.task_id AND ts.task_id=$task_id AND ti.time_id=$time_id";
+        $query=$this->Loginmodel->getdata("  timesheet ti, tasks ts  ",$condition);       
+        $data['timesheet_data']=$query;
+        $this->load->view("user/edit_timesheet",@$data);
+        
        }
        else   {
         redirect('user/login');

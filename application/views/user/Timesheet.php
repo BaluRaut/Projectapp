@@ -27,6 +27,7 @@
             transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
             width: 105px;
       }
+      td a { color:white; }
      </style>
 	<div class="wrapper row-offcanvas row-offcanvas-left">
 	<!-- Left side column. contains the logo and sidebar -->
@@ -117,6 +118,12 @@
             <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
                 style="width: 115px;" aria-label="CSS grade: activate to sort column ascending">Total Hours
             </th>
+                 <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
+                style="width: 20px;" aria-label="CSS grade: activate to sort column ascending">Edit
+            </th>
+                 <th class="sorting" role="columnheader" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" 
+                style="width: 20px;" aria-label="CSS grade: activate to sort column ascending">Delete
+            </th>
         </tr>
 	</thead>
 	<tfoot>
@@ -134,20 +141,23 @@
 	$mod=1;
 	foreach($timesheet_details as $times)  { 
 	if($mod%2==0){
-
+        $uids=  uniqid();
 	?>        
 
 	<tr class="odd">
 	<td><?php echo  $times['project_name']; ?> </td>
 	<td style="color:#2A6496"><?php echo  $times['task_name'] ; ?> </td>
-	<td><?php echo  $times['totalhours'] ; ?>:00 </td>                         
-	</tr>
+	<td><?php echo  $times['totalhours'] ; ?>:00 </td>   
+        <td class="bg bg-light-blue">  <a class="ajaxss" href="<?php echo site_url('user/edit_timesheet/?timesheet_id='.$times['time_id'].'&task_id='.$times['task_id'].'');?>" > Edit </a> </td> 
+        <td class="bg bg-red" class="dela" data-widget="remove"> <a href="#" onclick="deletes(<?php  echo  $times['time_id'] ; ?>);" style="color:white" id="delete_record"> Delete </a> </td>	</tr>
+   
 	<?php  }  else { ?>
 	<tr class="even">
 	<td><?php echo  $times['project_name']; ?> </td>
 	<td style="color:#2A6496"><?php  echo  $times['task_name'] ; ?> </td>
 	<td><?php  echo  $times['totalhours'] ; ?>:00 </td>
-	</tr>
+        <td class="bg bg-light-blue">  <a href="<?php echo site_url('user/edit_timesheet/?timesheet_id='.$times['time_id'].'&task_id='.$times['task_id'].'');?>" > Edit </a> </td> 
+        <td class="bg bg-red" class="dela" data-widget="remove"> <a href="#" onclick="deletes(<?php  echo  $times['time_id'] ; ?>);" style="color:white" id="delete_record"> Delete </a> </td>	</tr>
 	<?php } // Even Else part close 
 	$mod++;
 	} // Main Loop close here
@@ -224,8 +234,24 @@ jQuery(function(){
                     }
                 });            
     });
+    
+       $( ".dela a" ).click(function( event ) {
+event.preventDefault();
+    });
+    function deletes(time_id) {
+       ans=confirm("Are you sure want to delete this record?");
+       if(ans){
+        $.ajax({
+                url: '<?php echo site_url('/user/delete_ajax/');?>',
+                type: 'POST',
+                data :'time_id='+time_id,
+                success: function(data) {
+                  window.location.reload(true);
+                   }
+                });
+                } 
+    }
     function search() {
-
           $.ajax({
                 url: '<?php echo site_url('/user/timesheet_ajax/');?>',
                 type: 'POST',
@@ -268,5 +294,6 @@ jQuery(function(){
         
        }
 </script>
+	
 	</body>
 	</html>

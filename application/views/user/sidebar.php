@@ -27,21 +27,15 @@
                                 <i class="fa fa-clock-o"></i> <span>My Timesheet</span>
                             </a>
                         </li>
-                        
-                        <script>
-   $(".useD").on('click',function(e) {
-       e.preventDefault();
-       var links=$(this).attr('href');
-         $.ajax({
-                url:links,
-                type: 'POST',
-                data :'pp=p',
-                success: function(data) {
-                    d=$(data).find('body');
-                    $('body').html(data);
-                    }
-                }); 
-             });   
-             
-    
-</script>
+                           <li>
+                            <a class="use" href="<?php echo site_url("user/my_calendar/");?>">
+                                <i class="fa fa-calendar"></i> <span>Calendar</span>
+                            </a>
+                        </li>
+                        <li>   <a class="use" href="<?php echo site_url("user/project_gantt_charts");?>"> <i class="fa fa-bars"> </i>
+                                <span> Projects Gantt Charts </span> </a>
+                        </li>  
+                         <li>   <a class="use" href="<?php echo site_url("user/task_gantt_charts");?>"> <i class="fa fa-bars"> </i>
+                                 <span> Tasks Gantt Charts </span> </a>
+                        </li> 
+                      
